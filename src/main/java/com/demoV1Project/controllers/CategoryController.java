@@ -1,9 +1,9 @@
 package com.demoV1Project.controllers;
 
 import com.demoV1Project.dto.CategoryDto;
-import com.demoV1Project.dto.UserDto;
+
 import com.demoV1Project.model.Category;
-import com.demoV1Project.model.User;
+
 import com.demoV1Project.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
