@@ -9,6 +9,7 @@ import com.demoV1Project.service.AddressService;
 import com.demoV1Project.service.BusinessService;
 import com.demoV1Project.service.CategoryService;
 import com.demoV1Project.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v0/business")
+@RequiredArgsConstructor
 public class BusinessController {
 
     @Autowired
@@ -34,12 +36,6 @@ public class BusinessController {
     @Autowired
     private final AddressService addressService;
 
-    public BusinessController(BusinessService businessService, UserService userService, CategoryService categoryService, AddressService addressService) {
-        this.businessService = businessService;
-        this.userService = userService;
-        this.categoryService = categoryService;
-        this.addressService = addressService;
-    }
 
 
     @GetMapping("/findAll")

@@ -5,6 +5,7 @@ import com.demoV1Project.dto.UserDto;
 import com.demoV1Project.model.Address;
 import com.demoV1Project.model.User;
 import com.demoV1Project.service.AddressService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +16,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v0/address")
+@RequiredArgsConstructor
 public class AddressController {
 
     @Autowired
     private final AddressService addressService;
 
-    public AddressController(AddressService addressService) {
-        this.addressService = addressService;
-    }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id){

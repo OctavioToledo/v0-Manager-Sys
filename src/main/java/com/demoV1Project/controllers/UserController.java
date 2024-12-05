@@ -6,6 +6,7 @@ import com.demoV1Project.dto.UserDto;
 import com.demoV1Project.model.User;
 import com.demoV1Project.service.UserService;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,14 +18,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v0/user")
+@RequiredArgsConstructor
 public class UserController {
 
     @Autowired
     private final UserService userService;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
-    }
+
 
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll(){

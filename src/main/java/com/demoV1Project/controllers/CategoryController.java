@@ -5,6 +5,7 @@ import com.demoV1Project.dto.CategoryDto;
 import com.demoV1Project.model.Category;
 
 import com.demoV1Project.service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,14 +17,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v0/category")
+@RequiredArgsConstructor
 public class CategoryController {
 
     @Autowired
     private final CategoryService categoryService;
 
-    public CategoryController(CategoryService categoryService) {
-        this.categoryService = categoryService;
-    }
 
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll(){
