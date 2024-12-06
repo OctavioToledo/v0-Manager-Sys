@@ -41,7 +41,7 @@ public class ServiceController {
         return ResponseEntity.ok(services);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
         Optional<Service> serviceOptional = serviceService.findById(id);
         if (serviceOptional.isEmpty()) {
@@ -77,7 +77,7 @@ public class ServiceController {
         return ResponseEntity.status(HttpStatus.CREATED).body("Service saved successfully");
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id) {
         serviceService.deleteById(id);
         return ResponseEntity.ok("Service deleted successfully");
