@@ -74,6 +74,8 @@ public class BusinessController {
                     .openingHours(business.getOpeningHours())
                     .workDays(business.getWorkDays())
                     .user(business.getUser())
+                    .category(business.getCategory())
+                    .address(business.getAddress())
                     .build();
             return ResponseEntity.ok(businessDto);
         }
@@ -84,40 +86,30 @@ public class BusinessController {
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody BusinessDto businessDto) throws URISyntaxException {
 
-        // Validación del User
-        if (businessDto.getUserId() == null) {
-            return ResponseEntity.badRequest().body("User ID is required");
+        // Validación del usuario
+        if (businessDto.getUser() == null) {
+            return ResponseEntity.badRequest().body("User cannot be null");
         }
+/*
 
-        Optional<User> userOptional = userService.findById(businessDto.getUserId());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-        User user = userOptional.get();
+        User user = userService.findById(businessDto.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        // Validación del Category
+        // Validación del Category (opcional)
         Category category = null;
         if (businessDto.getCategory() != null && businessDto.getCategory().getId() != null) {
-            Optional<Category> categoryOptional = categoryService.findById(businessDto.getCategory().getId());
-            if (categoryOptional.isPresent()) {
-                category = categoryOptional.get();
-            } else {
-                return ResponseEntity.badRequest().body("Category not found");
-            }
+            category = categoryService.findById(businessDto.getCategory().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
         }
 
-        // Validación del Address
+        // Validación del Address (opcional)
         Address address = null;
         if (businessDto.getAddress() != null && businessDto.getAddress().getId() != null) {
-            Optional<Address> addressOptional = addressService.findById(businessDto.getAddress().getId());
-            if (addressOptional.isPresent()) {
-                address = addressOptional.get();
-            } else {
-                return ResponseEntity.badRequest().body("Address not found");
-            }
+            address = addressService.findById(businessDto.getAddress().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Address not found"));
         }
-
-        // Creación de Business
+ */
+        // Construcción del objeto Business
         Business business = Business.builder()
                 .name(businessDto.getName())
                 .description(businessDto.getDescription())
@@ -125,38 +117,62 @@ public class BusinessController {
                 .logo(businessDto.getLogo())
                 .openingHours(businessDto.getOpeningHours())
                 .workDays(businessDto.getWorkDays())
-                .user(user)
-                .category(category) // Asociar Category existente
-                .address(address)   // Asociar Address existente
+                .user(businessDto.getUser())  // Asociar el usuario
+                .category(businessDto.getCategory()) // Asociar categoría
+                .address(businessDto.getAddress())   // Asociar dirección
                 .build();
 
         // Guardar el negocio
         businessService.save(business);
 
-        return ResponseEntity.created(new URI("/api/v0/business/save")).build();
+        return ResponseEntity.created(new URI("/api/v0/business/save/")).body("Business created successfully");
     }
+
 
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody BusinessDto businessDto){
-        Optional<Business> businessOptional = businessService.findById(id);
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody BusinessDto businessDto) {
 
-        if (businessOptional.isPresent()) {
-            Business business = businessOptional.get();
-                    business.setName(businessDto.getName());
-                    business.setDescription(businessDto.getDescription());
-                    business.setPhoneNumber(businessDto.getPhoneNumber());
-                    business.setLogo(businessDto.getLogo());
-                    business.setOpeningHours(businessDto.getOpeningHours());
-                    business.setWorkDays(businessDto.getWorkDays());
-                    business.setUser(businessDto.getUser());
-
-                    businessService.save(business);
-
-            return ResponseEntity.ok("Field Updated");
+        Business business = businessService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Business not found"));
+/*
+        // Validación del usuario
+        if (businessDto.getUserId() != null) {
+            User user = userService.findById(businessDto.getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            business.setUser(user);
         }
-        return ResponseEntity.badRequest().build();
+
+        // Validación del Category (opcional)
+        if (businessDto.getCategory() != null && businessDto.getCategory().getId() != null) {
+            Category category = categoryService.findById(businessDto.getCategory().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Category not found"));
+            business.setCategory(category);
+        }
+
+        // Validación del Address (opcional)
+        if (businessDto.getAddress() != null && businessDto.getAddress().getId() != null) {
+            Address address = addressService.findById(businessDto.getAddress().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("Address not found"));
+            business.setAddress(address);
+        }
+ */
+        // Actualización de los campos restantes
+        business.setName(businessDto.getName());
+        business.setDescription(businessDto.getDescription());
+        business.setPhoneNumber(businessDto.getPhoneNumber());
+        business.setLogo(businessDto.getLogo());
+        business.setOpeningHours(businessDto.getOpeningHours());
+        business.setWorkDays(businessDto.getWorkDays());
+        business.setUser(businessDto.getUser());
+        business.setCategory(businessDto.getCategory());
+        business.setAddress(businessDto.getAddress());
+        // Guardar el negocio actualizado
+        businessService.save(business);
+
+        return ResponseEntity.ok("Business updated successfully");
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteById(@PathVariable Long id){

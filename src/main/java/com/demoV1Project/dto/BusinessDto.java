@@ -22,8 +22,9 @@ public class BusinessDto {
     private String logo;
     private String openingHours;
     private String workDays;
-    private Long userId;
-    private User user;
+    // private Long userId;
     private Address address;
     private Category category;
+    private User user;
+
 }

@@ -29,17 +29,25 @@ public class Business {
     @Column(name = "work_days")
     private String workDays;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+
+
+    public Long getUserId() {
+        return user != null ? user.getId() : null; // Exponer solo el ID del usuario
+    }
+
+
+
+    @ManyToOne()
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne()
     @JoinColumn(name = "category_id")
 
     private Category category;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne()
     @JoinColumn(name = "address_id")
 
     private Address address;

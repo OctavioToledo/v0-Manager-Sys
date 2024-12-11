@@ -1,8 +1,10 @@
 package com.demoV1Project.controllers;
 
 import com.demoV1Project.dto.ServiceDto;
+import com.demoV1Project.model.Business;
 import com.demoV1Project.model.Employee;
 import com.demoV1Project.model.Service;
+import com.demoV1Project.service.BusinessService;
 import com.demoV1Project.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class ServiceController {
 
     @Autowired
     private final ServiceService serviceService;
+
+    @Autowired
+    private final BusinessService businessService;
 
     @GetMapping("/findAll")
     public ResponseEntity<List<ServiceDto>> findAll() {
@@ -67,11 +72,25 @@ public class ServiceController {
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody ServiceDto serviceDto) {
         // Validaciones de negocio según sea necesario
+
+        if (serviceDto.getBusinessId() == null) {
+            return ResponseEntity.badRequest().body("Business ID is required");
+        }
+
+        // Buscar el negocio correspondiente
+        Optional<Business> businessOptional = businessService.findById(serviceDto.getBusinessId());
+        if (businessOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("Business not found");
+        }
+
+        Business business = businessOptional.get();
+
         Service service = Service.builder()
                 .name(serviceDto.getName())
                 .duration(serviceDto.getDuration())
                 .description(serviceDto.getDescription())
                 .price(serviceDto.getPrice())
+                .business(business)
                 .build();
         serviceService.save(service);
         return ResponseEntity.status(HttpStatus.CREATED).body("Service saved successfully");
