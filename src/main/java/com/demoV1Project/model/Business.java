@@ -44,11 +44,22 @@ public class Business {
 
     @ManyToOne()
     @JoinColumn(name = "category_id")
-
     private Category category;
 
     @OneToOne()
     @JoinColumn(name = "address_id")
-
     private Address address;
+
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
+
+    @ManyToOne(
+            fetch = FetchType.LAZY
+    )
+    @JoinColumn(name = "service_id")
+    private Service service;
+
 }
