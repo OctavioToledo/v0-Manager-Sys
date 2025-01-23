@@ -31,5 +31,11 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<Business> businessList;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
+
+
+
 }
 

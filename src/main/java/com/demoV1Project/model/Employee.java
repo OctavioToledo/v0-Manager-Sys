@@ -39,4 +39,9 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(name = "service_id")
     )
     private List<Service> services;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Appointment> appointments;
+
 }

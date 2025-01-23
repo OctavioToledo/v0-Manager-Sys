@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class AddressCategoryImpl implements AddressService {
+public class AddressServiceImpl implements AddressService {
 
     @Autowired
     private final AddressDao addressDao;
 
-    public AddressCategoryImpl(AddressDao addressDao) {
+    public AddressServiceImpl(AddressDao addressDao) {
         this.addressDao = addressDao;
     }
 

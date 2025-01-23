@@ -35,5 +35,9 @@ public class Service {
     @ManyToMany(mappedBy = "services")
     @JsonIgnore
     private List<Employee> employees;
+
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
+
 }
 

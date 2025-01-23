@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -61,5 +63,13 @@ public class Business {
     )
     @JoinColumn(name = "service_id")
     private Service service;
+
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
+
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL)
+    private List<Transaction> transactions;
+
+
 
 }
