@@ -36,7 +36,7 @@ public class AppointmentController {
 
     @Autowired
     private final ServiceService serviceService;
-
+    
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
         List<AppointmentDto> appointmentList = appointmentService.findAll()
