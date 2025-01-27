@@ -1,0 +1,40 @@
+package com.demoV1Project.application.service.Impl;
+
+import com.demoV1Project.infrastructure.persistence.ServiceDao;
+import com.demoV1Project.application.service.ServiceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class ServiceServiceImpl implements ServiceService {
+
+    @Autowired
+    private final ServiceDao serviceDao;
+
+    public ServiceServiceImpl(ServiceDao serviceDao) {
+        this.serviceDao = serviceDao;
+    }
+
+    @Override
+    public List<com.demoV1Project.domain.model.Service> findAll() {
+        return serviceDao.findAll();
+    }
+
+    @Override
+    public Optional<com.demoV1Project.domain.model.Service> findById(Long id) {
+        return serviceDao.findById(id);
+    }
+
+    @Override
+    public void save(com.demoV1Project.domain.model.Service service) {
+        serviceDao.save(service);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        serviceDao.deleteById(id);
+    }
+}
