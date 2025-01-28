@@ -1,5 +1,6 @@
 package com.demoV1Project.infrastructure.controllers;
 
+import com.demoV1Project.application.mapper.AppointmentMapper;
 import com.demoV1Project.domain.dto.AppointmentDto;
 import com.demoV1Project.util.enums.AppointmentStatus;
 import com.demoV1Project.domain.model.Appointment;
@@ -36,19 +37,15 @@ public class AppointmentController {
 
     @Autowired
     private final ServiceService serviceService;
+
+    @Autowired
+    private final AppointmentMapper appointmentMapper;
     
     @GetMapping("/findAll")
     public ResponseEntity<?> findAll() {
         List<AppointmentDto> appointmentList = appointmentService.findAll()
                 .stream()
-                .map(appointment -> AppointmentDto.builder()
-                        .id(appointment.getId())
-                        .status(appointment.getStatus().toString()) // Convertir enum a String
-                        .date(appointment.getDate())
-                        .employeeId(appointment.getEmployee().getId())
-                        .serviceId(appointment.getService().getId())
-                        .userId(appointment.getUser().getId())
-                        .build())
+                .map(appointmentMapper::toDto)
                 .toList();
 
         return ResponseEntity.ok(appointmentList);
@@ -57,78 +54,22 @@ public class AppointmentController {
 
     @GetMapping("/find/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
-        Optional<Appointment> appointmentOptional = appointmentService.findById(id);
-
-        if (appointmentOptional.isPresent()) {
-            Appointment appointment = appointmentOptional.get();
-            AppointmentDto appointmentDto = AppointmentDto.builder()
-                    .id(appointment.getId())
-                    .status(appointment.getStatus().toString()) // Convertir enum a String
-                    .date(appointment.getDate())
-                    .employeeId(appointment.getEmployee().getId())
-                    .serviceId(appointment.getService().getId())
-                    .userId(appointment.getUser().getId())
-                    .build();
-
-            return ResponseEntity.ok(appointmentDto);
-        }
-        return ResponseEntity.notFound().build();
+        return appointmentService.findById(id)
+                .map(appointmentMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody AppointmentDto appointmentDto) throws URISyntaxException {
-        // Validar y obtener Employee
-        if (appointmentDto.getEmployeeId() == null) {
-            return ResponseEntity.badRequest().body("Employee ID is required");
-        }
-        Optional<Employee> employeeOptional = employeeService.findById(appointmentDto.getEmployeeId());
-        if (employeeOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Employee not found");
-        }
-        Employee employee = employeeOptional.get();
-
-        // Validar y obtener Service
-        if (appointmentDto.getServiceId() == null) {
-            return ResponseEntity.badRequest().body("Service ID is required");
-        }
-        Optional<Service> serviceOptional = serviceService.findById(appointmentDto.getServiceId());
-        if (serviceOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("Service not found");
-        }
-        Service service = serviceOptional.get();
-
-        // Validar y obtener User
-        if (appointmentDto.getUserId() == null) {
-            return ResponseEntity.badRequest().body("User ID is required");
-        }
-        Optional<User> userOptional = userService.findById(appointmentDto.getUserId());
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("User not found");
-        }
-        User user = userOptional.get();
-
-        // Convertir el String del status al enum
-        AppointmentStatus status;
+    public ResponseEntity<?> save(@RequestBody AppointmentDto appointmentDto) {
         try {
-            status = AppointmentStatus.valueOf(appointmentDto.getStatus());
+            Appointment appointment = appointmentService.createAndSaveAppointment(appointmentDto);
+            return ResponseEntity.ok(appointment);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid status value");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
-
-        // Crear y guardar el Appointment
-        Appointment appointment = Appointment.builder()
-                .status(status)
-                .date(appointmentDto.getDate())
-                .employee(employee)
-                .service(service)
-                .user(user)
-                .build();
-
-        appointmentService.save(appointment);
-        return ResponseEntity.created(new URI("/api/v0/appointment/save")).build();
     }
-
 
     @DeleteMapping("/delete/{id}")
         public ResponseEntity<?> deleteById(@PathVariable Long id) {

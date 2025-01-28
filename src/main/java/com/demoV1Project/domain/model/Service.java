@@ -37,6 +37,7 @@ public class Service {
     private List<Employee> employees;
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Appointment> appointments;
 
 }

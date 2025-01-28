@@ -1,5 +1,6 @@
 package com.demoV1Project.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,11 +28,13 @@ public class Transaction {
 
     @OneToOne
     @JoinColumn(name = "appointment_id")
+    @JsonIgnore
     private Appointment appointment;
 
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id", nullable = false)
+    @JsonIgnore
     private Business business;
 }
 

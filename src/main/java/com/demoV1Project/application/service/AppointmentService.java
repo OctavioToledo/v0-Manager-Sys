@@ -1,6 +1,7 @@
 package com.demoV1Project.application.service;
 
 
+import com.demoV1Project.domain.dto.AppointmentDto;
 import com.demoV1Project.domain.model.Appointment;
 
 import java.util.List;
@@ -10,7 +11,6 @@ public interface AppointmentService {
     List<Appointment> findAll();
     Optional<Appointment> findById(Long id);
     void save(Appointment appointment);
-    // void update(Appointment appointment);
     void deleteById(Long id);
-
+    Appointment createAndSaveAppointment(AppointmentDto appointmentDto);
 }

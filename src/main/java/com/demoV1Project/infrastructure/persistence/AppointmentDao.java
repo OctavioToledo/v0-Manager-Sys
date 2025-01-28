@@ -10,6 +10,6 @@ public interface AppointmentDao {
     Optional<Appointment> findById(Long id);
     void save(Appointment appointment);
     void deleteById(Long id);
-    //void update(Appointment appointment);
+
 
 }

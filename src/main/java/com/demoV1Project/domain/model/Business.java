@@ -31,10 +31,6 @@ public class Business {
     @Column(name = "work_days")
     private String workDays;
 
-    public Long getUserId() {
-        return user != null ? user.getId() : null; // Exponer solo el ID del usuario
-    }
-
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore

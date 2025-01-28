@@ -1,6 +1,7 @@
 package com.demoV1Project.domain.model;
 
 import com.demoV1Project.util.enums.AppointmentStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,10 +38,12 @@ public class Appointment {
 
     @ManyToOne
     @JoinColumn(name = "business_id")
+    @JsonIgnore
     private Business business;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnore
     private User user;
 }
 
