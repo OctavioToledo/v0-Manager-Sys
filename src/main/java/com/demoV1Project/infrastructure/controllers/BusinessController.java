@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v0/business")
@@ -26,33 +25,32 @@ public class BusinessController {
     private final BusinessMapper businessMapper;
 
     @GetMapping("/findAll")
-    public ResponseEntity<?> findAll() {
-        List<BusinessDto> businessList = businessService.findAll().stream()
-                .map(businessMapper::toDto)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(businessList);
+    public ResponseEntity<List<BusinessDto>> findAll() {
+        List<Business> businesses = businessService.findAll();
+        List<BusinessDto> businessDtos = businessMapper.toDtoList(businesses);
+        return ResponseEntity.ok(businessDtos);
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id) {
+    public ResponseEntity<BusinessDto> findById(@PathVariable Long id) {
         return businessService.findById(id)
                 .map(business -> ResponseEntity.ok(businessMapper.toDto(business)))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody BusinessDto businessDto) throws URISyntaxException {
+    public ResponseEntity<String> save(@RequestBody BusinessDto businessDto) throws URISyntaxException {
         Business business = businessMapper.toEntity(businessDto);
         businessService.save(business);
         return ResponseEntity.created(new URI("/api/v0/business/save/")).body("Business created successfully");
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody BusinessDto businessDto) {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody BusinessDto businessDto) {
         Business business = businessService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Business not found"));
 
-        // Actualización de los campos restantes
+        // Actualización del negocio usando los datos del DTO
         business.setName(businessDto.getName());
         business.setDescription(businessDto.getDescription());
         business.setPhoneNumber(businessDto.getPhoneNumber());
@@ -62,17 +60,14 @@ public class BusinessController {
         business.setUser(businessDto.getUser());
         business.setCategory(businessDto.getCategory());
         business.setAddress(businessDto.getAddress());
-        businessService.save(business);
 
+        businessService.save(business);
         return ResponseEntity.ok("Business updated successfully");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id) {
-        if (id != null) {
-            businessService.deleteById(id);
-            return ResponseEntity.ok("Field Deleted");
-        }
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        businessService.deleteById(id);
+        return ResponseEntity.ok("Business deleted successfully");
     }
 }

@@ -1,14 +1,15 @@
 package com.demoV1Project.infrastructure.controllers;
 
+import com.demoV1Project.application.mapper.TransactionMapper;
+import com.demoV1Project.application.service.AppointmentService;
+import com.demoV1Project.application.service.BusinessService;
+import com.demoV1Project.application.service.TransactionService;
 import com.demoV1Project.domain.dto.TransactionDto;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Transaction;
-import com.demoV1Project.application.service.AppointmentService;
-import com.demoV1Project.application.service.BusinessService;
-import com.demoV1Project.application.service.TransactionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,100 +23,57 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TransactionController {
 
-    @Autowired
     private final TransactionService transactionService;
-
-    @Autowired
     private final AppointmentService appointmentService;
-
-    @Autowired
     private final BusinessService businessService;
-
-
+    private final TransactionMapper transactionMapper;
 
     @GetMapping("/findAll")
-        public ResponseEntity<?> findAll() {
-            List<TransactionDto> transactionList = transactionService.findAll()
-                    .stream()
-                    .map(transaction -> TransactionDto.builder()
-                            .id(transaction.getId())
-                            .amount(transaction.getAmount())
-                            .date(transaction.getDate())
-                            .description(transaction.getDescription())
-                            .appointmentId(transaction.getAppointment().getId())
-                            .businessId(transaction.getBusiness().getId())
-                            .build())
-                    .toList();
-            return ResponseEntity.ok(transactionList);
-        }
+    public ResponseEntity<List<TransactionDto>> findAll() {
+        List<Transaction> transactions = transactionService.findAll();
+        return ResponseEntity.ok(transactionMapper.toDtoList(transactions));
+    }
 
-        @GetMapping("/find/{id}")
-        public ResponseEntity<?> findById(@PathVariable Long id) {
-            Optional<Transaction> transactionOptional = transactionService.findById(id);
-
-            if (transactionOptional.isPresent()) {
-                Transaction transaction = transactionOptional.get();
-                TransactionDto transactionDto = TransactionDto.builder()
-                        .id(transaction.getId())
-                        .amount(transaction.getAmount())
-                        .date(transaction.getDate())
-                        .description(transaction.getDescription())
-                        .appointmentId(transaction.getAppointment().getId())
-                        .businessId(transaction.getBusiness().getId())
-                        .build();
-                return ResponseEntity.ok(transactionDto);
-            }
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/find/{id}")
+    public ResponseEntity<TransactionDto> findById(@PathVariable Long id) {
+        return transactionService.findById(id)
+                .map(transactionMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody TransactionDto transactionDto) throws URISyntaxException {
-        // Validación del Appointment
-        if (transactionDto.getAppointmentId() == null) {
-            return ResponseEntity.badRequest().body("Appointment ID is required");
+    public ResponseEntity<String> save(@RequestBody TransactionDto transactionDto) throws URISyntaxException {
+        if (transactionDto.getAppointmentId() == null || transactionDto.getBusinessId() == null) {
+            return ResponseEntity.badRequest().body("Appointment ID and Business ID are required");
         }
 
         Optional<Appointment> appointmentOptional = appointmentService.findById(transactionDto.getAppointmentId());
+        Optional<Business> businessOptional = businessService.findById(transactionDto.getBusinessId());
+
         if (appointmentOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Appointment not found");
         }
-        Appointment appointment = appointmentOptional.get();
 
-        // Validación del Business
-        if (transactionDto.getBusinessId() == null) {
-            return ResponseEntity.badRequest().body("Business ID is required");
-        }
-
-        Optional<Business> businessOptional = businessService.findById(transactionDto.getBusinessId());
         if (businessOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Business not found");
         }
-        Business business = businessOptional.get();
 
-        // Crear la transacción
-        Transaction transaction = Transaction.builder()
-                .amount(transactionDto.getAmount())
-                .date(transactionDto.getDate())
-                .description(transactionDto.getDescription())
-                .appointment(appointment) // Asociar el Appointment existente
-                .business(business)       // Asociar el Business existente
-                .build();
+        Transaction transaction = transactionMapper.toEntity(transactionDto);
+        transaction.setAppointment(appointmentOptional.get());
+        transaction.setBusiness(businessOptional.get());
 
-        // Guardar la transacción
         transactionService.save(transaction);
 
-        return ResponseEntity.created(new URI("/api/v0/transaction/save")).build();
+        return ResponseEntity.created(new URI("/api/v0/transaction/save")).body("Transaction saved successfully");
     }
-
 
     @DeleteMapping("/delete/{id}")
-        public ResponseEntity<?> deleteById(@PathVariable Long id) {
-            if (id != null) {
-                transactionService.deleteById(id);
-                return ResponseEntity.ok("Transaction Deleted");
-            }
-            return ResponseEntity.badRequest().build();
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        if (transactionService.findById(id).isPresent()) {
+            transactionService.deleteById(id);
+            return ResponseEntity.ok("Transaction deleted successfully");
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Transaction not found");
     }
-
-
+}

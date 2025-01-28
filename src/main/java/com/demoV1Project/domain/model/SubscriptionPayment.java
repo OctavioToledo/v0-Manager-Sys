@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -24,6 +25,8 @@ public class SubscriptionPayment {
 
     @Column(name = "payment_date", nullable = false)
     private LocalDateTime paymentDate;
+
+    private LocalDate endDate;
 
     @Column(name = "payment_method", nullable = false)
     private String paymentMethod; // Puede ser un enum si prefieres valores fijos

@@ -26,6 +26,11 @@ public class Transaction {
 
     private String description;
 
+    @Column(name = "payment_method", nullable = false)
+    private String paymentMethod;
+
+    private String status;
+
     @OneToOne
     @JoinColumn(name = "appointment_id")
     @JsonIgnore

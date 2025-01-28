@@ -1,13 +1,11 @@
 package com.demoV1Project.infrastructure.controllers;
 
-
-
+import com.demoV1Project.application.mapper.UserMapper;
+import com.demoV1Project.application.service.UserService;
 import com.demoV1Project.domain.dto.UserDto;
 import com.demoV1Project.domain.model.User;
-import com.demoV1Project.application.service.UserService;
-
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,67 +19,32 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserController {
 
-    @Autowired
     private final UserService userService;
-
-
+    private final UserMapper userMapper;
 
     @GetMapping("/findAll")
-    public ResponseEntity<?> findAll(){
-        List<UserDto> usersList = userService.findAll()
-                .stream()
-                .map(user -> UserDto.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .password(user.getPassword())
-                        .phoneNumber(user.getPhoneNumber())
-                        .email(user.getEmail())
-                        .role(user.getRole())
-                        .businessList(user.getBusinessList())
-                        .build())
-                .toList();
-        return ResponseEntity.ok(usersList);
+    public ResponseEntity<List<UserDto>> findAll() {
+        List<User> users = userService.findAll();
+        return ResponseEntity.ok(userMapper.toDtoList(users));
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id){
-
-        Optional<User> userOptional = userService.findById(id);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            UserDto userDto = UserDto.builder()
-                    .id(user.getId())
-                    .name(user.getName())
-                    .password(user.getPassword())
-                    .phoneNumber(user.getPhoneNumber())
-                    .email(user.getEmail())
-                    .role(user.getRole())
-                    .businessList(user.getBusinessList())
-                    .build();
-            return ResponseEntity.ok(userDto);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<UserDto> findById(@PathVariable Long id) {
+        return userService.findById(id)
+                .map(userMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-
     @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody UserDto userDto) throws URISyntaxException {
-
-        User user = (User.builder()
-                .name(userDto.getName())
-                .password(userDto.getPassword())
-                .phoneNumber(userDto.getPhoneNumber())
-                .email(userDto.getEmail())
-                .role(userDto.getRole())
-                .build());
+    public ResponseEntity<String> save(@RequestBody UserDto userDto) throws URISyntaxException {
+        User user = userMapper.toEntity(userDto);
         userService.save(user);
-
-        return ResponseEntity.created(new URI("/api/v0/user/save")).build();
+        return ResponseEntity.created(new URI("/api/v0/user/save")).body("User saved successfully");
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody UserDto userDto){
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody UserDto userDto) {
         Optional<User> userOptional = userService.findById(id);
 
         if (userOptional.isPresent()) {
@@ -91,22 +54,19 @@ public class UserController {
             user.setPhoneNumber(userDto.getPhoneNumber());
             user.setEmail(userDto.getEmail());
             user.setRole(userDto.getRole());
-            user.setBusinessList(user.getBusinessList());
 
             userService.save(user);
-
-            return ResponseEntity.ok("Field Updated");
+            return ResponseEntity.ok("User updated successfully");
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id){
-        if (id != null) {
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        if (userService.findById(id).isPresent()) {
             userService.deleteById(id);
-            return ResponseEntity.ok("Field Deleted");
+            return ResponseEntity.ok("User deleted successfully");
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
     }
-
 }

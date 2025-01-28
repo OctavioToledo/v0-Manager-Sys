@@ -1,88 +1,64 @@
 package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.domain.dto.CategoryDto;
-
 import com.demoV1Project.domain.model.Category;
-
 import com.demoV1Project.application.service.CategoryService;
+import com.demoV1Project.application.mapper.CategoryMapper;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/api/v0/category")
 @RequiredArgsConstructor
 public class CategoryController {
 
-    @Autowired
     private final CategoryService categoryService;
-
+    private final CategoryMapper categoryMapper;
 
     @GetMapping("/findAll")
-    public ResponseEntity<?> findAll(){
-        List<CategoryDto> categoryDtoList = categoryService.findAll()
-                .stream()
-                .map(user -> CategoryDto.builder()
-                        .id(user.getId())
-                        .name(user.getName())
-                        .build())
-                .toList();
-        return ResponseEntity.ok(categoryDtoList);
+    public ResponseEntity<List<CategoryDto>> findAll() {
+        List<Category> categories = categoryService.findAll();
+        List<CategoryDto> categoryDtos = categoryMapper.toDtoList(categories);
+        return ResponseEntity.ok(categoryDtos);
     }
 
     @GetMapping("/find/{id}")
-    public ResponseEntity<?> findById(@PathVariable Long id){
-
-        Optional<Category> categoryOptional = categoryService.findById(id);
-
-        if (categoryOptional.isPresent()) {
-            Category category = categoryOptional.get();
-            CategoryDto categoryDto = CategoryDto.builder()
-                    .id(category.getId())
-                    .name(category.getName())
-                    .build();
-            return ResponseEntity.ok(categoryDto);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<CategoryDto> findById(@PathVariable Long id) {
+        return categoryService.findById(id)
+                .map(categoryMapper::toDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> save(@RequestBody CategoryDto categoryDto) throws URISyntaxException {
-        Category category = (Category.builder()
-                .name(categoryDto.getName())
-                .build());
+    public ResponseEntity<Void> save(@RequestBody CategoryDto categoryDto) {
+        Category category = categoryMapper.toEntity(categoryDto);
         categoryService.save(category);
-        return ResponseEntity.created(new URI("/api/v0/category/save")).build();
+        return ResponseEntity.created(URI.create("/api/v0/category/save")).build();
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody CategoryDto categoryDto){
-        Optional<Category> categoryOptional = categoryService.findById(id);
-
-        if (categoryOptional.isPresent()) {
-            Category category = categoryOptional.get();
-            category.setName(categoryDto.getName());
-            categoryService.save(category);
-
-            return ResponseEntity.ok("Field Updated");
-        }
-        return ResponseEntity.badRequest().build();
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
+        return categoryService.findById(id)
+                .map(existingCategory -> {
+                    existingCategory.setName(categoryDto.getName());
+                    categoryService.save(existingCategory);
+                    return ResponseEntity.ok("Field Updated");
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteById(@PathVariable Long id){
-        if (id != null) {
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        if (id != null && categoryService.findById(id).isPresent()) {
             categoryService.deleteById(id);
             return ResponseEntity.ok("Field Deleted");
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.notFound().build();
     }
-
-
 }
