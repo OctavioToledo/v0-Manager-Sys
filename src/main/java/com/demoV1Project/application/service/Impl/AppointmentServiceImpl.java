@@ -3,7 +3,7 @@ package com.demoV1Project.application.service.Impl;
 import com.demoV1Project.application.service.EmployeeService;
 import com.demoV1Project.application.service.ServiceService;
 import com.demoV1Project.application.service.UserService;
-import com.demoV1Project.domain.dto.AppointmentDto;
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.User;

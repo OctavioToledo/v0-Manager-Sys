@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.BusinessDto;
+import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
 import com.demoV1Project.domain.model.Business;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

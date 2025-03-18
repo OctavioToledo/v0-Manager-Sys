@@ -4,7 +4,7 @@ import com.demoV1Project.application.mapper.TransactionMapper;
 import com.demoV1Project.application.service.AppointmentService;
 import com.demoV1Project.application.service.BusinessService;
 import com.demoV1Project.application.service.TransactionService;
-import com.demoV1Project.domain.dto.TransactionDto;
+import com.demoV1Project.domain.dto.TransactionDto.TransactionDto;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Transaction;

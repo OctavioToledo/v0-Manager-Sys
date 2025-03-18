@@ -1,6 +1,8 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.AddressDto;
+import com.demoV1Project.domain.dto.AddressDto.AddressCreateDto;
+import com.demoV1Project.domain.dto.AddressDto.AddressDto;
+import com.demoV1Project.domain.dto.AddressDto.AddressUpdateDto;
 import com.demoV1Project.domain.model.Address;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -21,14 +23,18 @@ public class AddressMapper {
         return modelMapper.map(address, AddressDto.class);
     }
 
-    public Address toEntity(AddressDto addressDto) {
-        return modelMapper.map(addressDto, Address.class);
+    public Address toEntity(AddressCreateDto addressCreateDTO ) {
+        return modelMapper.map(addressCreateDTO , Address.class);
     }
 
     public List<AddressDto> toDtoList(List<Address> addresses) {
         return addresses.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public void updateEntity(AddressUpdateDto addressUpdateDTO, Address address) {
+        modelMapper.map(addressUpdateDTO, address);
     }
 
 }

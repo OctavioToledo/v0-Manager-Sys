@@ -1,6 +1,6 @@
 package com.demoV1Project.infrastructure.controllers;
 
-import com.demoV1Project.domain.dto.CategoryDto;
+import com.demoV1Project.domain.dto.CategoryDto.CategoryDto;
 import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.application.service.CategoryService;
 import com.demoV1Project.application.mapper.CategoryMapper;

@@ -2,7 +2,7 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.BusinessMapper;
 import com.demoV1Project.application.service.BusinessService;
-import com.demoV1Project.domain.dto.BusinessDto;
+import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
 import com.demoV1Project.domain.model.Business;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

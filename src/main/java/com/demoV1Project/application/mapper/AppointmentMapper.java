@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.AppointmentDto;
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.model.Appointment;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

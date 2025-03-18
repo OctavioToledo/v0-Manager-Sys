@@ -1,4 +1,4 @@
-package com.demoV1Project.domain.dto;
+package com.demoV1Project.domain.dto.BusinessDto;
 
 
 import com.demoV1Project.domain.model.Address;

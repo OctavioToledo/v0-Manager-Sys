@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.CategoryDto;
+import com.demoV1Project.domain.dto.CategoryDto.CategoryDto;
 import com.demoV1Project.domain.model.Category;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

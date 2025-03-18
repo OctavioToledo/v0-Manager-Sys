@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.UserDto;
+import com.demoV1Project.domain.dto.UserDto.UserDto;
 import com.demoV1Project.domain.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

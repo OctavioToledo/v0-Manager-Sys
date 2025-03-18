@@ -1,4 +1,4 @@
-package com.demoV1Project.domain.dto;
+package com.demoV1Project.domain.dto.EmployeeDto;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package com.demoV1Project.application.service;
 
 
-import com.demoV1Project.domain.dto.AppointmentDto;
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.model.Appointment;
 
 import java.util.List;

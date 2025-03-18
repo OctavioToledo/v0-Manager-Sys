@@ -3,7 +3,7 @@ package com.demoV1Project.infrastructure.controllers;
 import com.demoV1Project.application.mapper.SubscriptionPaymentMapper;
 import com.demoV1Project.application.service.SubscriptionPaymentService;
 import com.demoV1Project.application.service.UserService;
-import com.demoV1Project.domain.dto.SubscriptionPaymentDto;
+import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentDto;
 import com.demoV1Project.domain.model.SubscriptionPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

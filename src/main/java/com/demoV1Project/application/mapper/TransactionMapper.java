@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.TransactionDto;
+import com.demoV1Project.domain.dto.TransactionDto.TransactionDto;
 import com.demoV1Project.domain.model.Transaction;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

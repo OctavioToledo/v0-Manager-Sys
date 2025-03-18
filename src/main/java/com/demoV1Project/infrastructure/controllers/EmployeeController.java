@@ -1,6 +1,6 @@
 package com.demoV1Project.infrastructure.controllers;
 
-import com.demoV1Project.domain.dto.EmployeeDto;
+import com.demoV1Project.domain.dto.EmployeeDto.EmployeeDto;
 
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.application.service.BusinessService;

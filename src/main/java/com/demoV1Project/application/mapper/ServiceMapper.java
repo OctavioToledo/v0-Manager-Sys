@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.ServiceDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.Service;
 import org.modelmapper.ModelMapper;

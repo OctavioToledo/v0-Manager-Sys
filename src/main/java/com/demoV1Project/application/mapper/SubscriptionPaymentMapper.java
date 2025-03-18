@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.SubscriptionPaymentDto;
+import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentDto;
 import com.demoV1Project.domain.model.SubscriptionPayment;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

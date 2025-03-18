@@ -2,7 +2,7 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.AppointmentMapper;
 import com.demoV1Project.application.service.AppointmentService;
-import com.demoV1Project.domain.dto.AppointmentDto;
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.model.Appointment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,9 @@
 package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.AddressMapper;
-import com.demoV1Project.domain.dto.AddressDto;
+import com.demoV1Project.domain.dto.AddressDto.AddressCreateDto;
+import com.demoV1Project.domain.dto.AddressDto.AddressDto;
+import com.demoV1Project.domain.dto.AddressDto.AddressUpdateDto;
 import com.demoV1Project.domain.model.Address;
 import com.demoV1Project.application.service.AddressService;
 import lombok.RequiredArgsConstructor;
@@ -30,25 +32,20 @@ public class AddressController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody AddressDto addressDto) throws URISyntaxException {
-        Address address = addressMapper.toEntity(addressDto);
+    public ResponseEntity<String> save(@RequestBody AddressCreateDto addressCreateDto) throws URISyntaxException {
+        Address address = addressMapper.toEntity(addressCreateDto);
         addressService.save(address);
         return ResponseEntity.created(new URI("/api/v0/address/save"))
                 .body("Address created successfully");
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody AddressDto addressDto) {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody AddressUpdateDto addressUpdateDto) {
         Optional<Address> addressOptional = addressService.findById(id);
 
         if (addressOptional.isPresent()) {
             Address address = addressOptional.get();
-            address.setStreet(addressDto.getStreet());
-            address.setStreetNumber(addressDto.getStreetNumber());
-            address.setCity(addressDto.getCity());
-            address.setProvince(addressDto.getProvince());
-            address.setCountry(addressDto.getCountry());
-
+            addressMapper.updateEntity(addressUpdateDto, address); // Usa el mapper para actualizar
             addressService.save(address);
             return ResponseEntity.ok("Address updated successfully");
         }

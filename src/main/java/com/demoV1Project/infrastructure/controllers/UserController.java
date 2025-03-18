@@ -2,7 +2,7 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.UserMapper;
 import com.demoV1Project.application.service.UserService;
-import com.demoV1Project.domain.dto.UserDto;
+import com.demoV1Project.domain.dto.UserDto.UserDto;
 import com.demoV1Project.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
