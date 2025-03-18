@@ -1,6 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
+import com.demoV1Project.domain.dto.BusinessDto.*;
 import com.demoV1Project.domain.model.Business;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +19,18 @@ public class BusinessMapper {
     public BusinessDto toDto(Business business) {
         return modelMapper.map(business, BusinessDto.class);
     }
+    public BusinessDetailDto toDetailDto(Business business) {
+        return modelMapper.map(business, BusinessDetailDto.class);
+    }
+
+
+    public BusinessShortDto toShortDto(Business business) {
+        return modelMapper.map(business, BusinessShortDto.class);
+    }
 
     // Convertir DTO a entidad
-    public Business toEntity(BusinessDto businessDto) {
-        return modelMapper.map(businessDto, Business.class);
+    public Business toEntity(BusinessCreateDto businessCreateDto) {
+        return modelMapper.map(businessCreateDto, Business.class);
     }
 
     // Convertir lista de entidades a lista de DTOs
@@ -30,6 +38,10 @@ public class BusinessMapper {
         return businesses.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+
+    public void updateEntity(BusinessUpdateDto businessUpdateDto, Business business){
+        modelMapper.map(businessUpdateDto, business);
     }
 
 }
