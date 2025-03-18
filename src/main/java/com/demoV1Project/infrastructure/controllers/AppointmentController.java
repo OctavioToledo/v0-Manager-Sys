@@ -2,7 +2,11 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.AppointmentMapper;
 import com.demoV1Project.application.service.AppointmentService;
+
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentUpdateDto;
+
 import com.demoV1Project.domain.model.Appointment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v0/appointment")
@@ -36,14 +41,27 @@ public class AppointmentController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody AppointmentDto appointmentDto) throws URISyntaxException {
+    public ResponseEntity<String> save(@RequestBody AppointmentCreateDto appointmentCreateDto) throws URISyntaxException {
         try {
-            Appointment appointment = appointmentService.createAndSaveAppointment(appointmentDto);
+            Appointment appointment = appointmentService.createAndSaveAppointment(appointmentCreateDto);
             return ResponseEntity.created(new URI("/api/v0/appointment/save/"))
                     .body("Appointment created successfully");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody AppointmentUpdateDto appointmentUpdateDto) {
+        Optional<Appointment> appointmentOptional = appointmentService.findById(id);
+
+        if (appointmentOptional.isPresent()) {
+            Appointment appointment = appointmentOptional.get();
+            appointmentMapper.updateEntity(appointmentUpdateDto, appointment); // Usa el mapper para actualizar
+            appointmentService.save(appointment);
+            return ResponseEntity.ok("Appointment updated successfully");
+        }
+        return ResponseEntity.badRequest().body("Appointment not found");
     }
 
     @DeleteMapping("/delete/{id}")

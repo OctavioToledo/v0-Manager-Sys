@@ -7,10 +7,12 @@ import java.util.Date;
 
 @Data
 @Builder
-public class AppointmentCreateDto {
+public class AppointmentUpdateDto {
+
     private String status;
     private Date date;
     private Long employeeId;
     private Long serviceId;
-    private Long userId;
+
+
 }

@@ -3,6 +3,7 @@ package com.demoV1Project.application.service.Impl;
 import com.demoV1Project.application.service.EmployeeService;
 import com.demoV1Project.application.service.ServiceService;
 import com.demoV1Project.application.service.UserService;
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.Employee;
@@ -54,21 +55,21 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public Appointment createAndSaveAppointment(AppointmentDto appointmentDto) {
+    public Appointment createAndSaveAppointment(AppointmentCreateDto appointmentCreateDto) {
         // Validar relaciones
-        Employee employee = employeeService.findById(appointmentDto.getEmployeeId())
+        Employee employee = employeeService.findById(appointmentCreateDto.getEmployeeId())
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
-        com.demoV1Project.domain.model.Service service = serviceService.findById(appointmentDto.getServiceId())
+        com.demoV1Project.domain.model.Service service = serviceService.findById(appointmentCreateDto.getServiceId())
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
 
-        User user = userService.findById(appointmentDto.getUserId())
+        User user = userService.findById(appointmentCreateDto.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         // Crear la entidad Appointment
         Appointment appointment = Appointment.builder()
-                .date(appointmentDto.getDate())
-                .status(AppointmentStatus.valueOf(appointmentDto.getStatus()))
+                .date(appointmentCreateDto.getDate())
+                .status(AppointmentStatus.valueOf(appointmentCreateDto.getStatus()))
                 .employee(employee)
                 .service(service)
                 .user(user)
