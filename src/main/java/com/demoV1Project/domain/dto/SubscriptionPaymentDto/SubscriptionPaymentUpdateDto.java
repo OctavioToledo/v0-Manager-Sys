@@ -1,21 +1,22 @@
 package com.demoV1Project.domain.dto.SubscriptionPaymentDto;
+
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class SubscriptionPaymentDto {
-
-    private Long id;
+@NoArgsConstructor
+@AllArgsConstructor
+public class SubscriptionPaymentUpdateDto {
     private BigDecimal amount;
     private LocalDateTime paymentDate;
     private LocalDateTime endDate;
     private String paymentMethod;
     private String status;
     private String description;
-    private Long userId; // ID del usuario
 }
-

@@ -3,7 +3,11 @@ package com.demoV1Project.infrastructure.controllers;
 import com.demoV1Project.application.mapper.SubscriptionPaymentMapper;
 import com.demoV1Project.application.service.SubscriptionPaymentService;
 import com.demoV1Project.application.service.UserService;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
+import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentCreateDto;
 import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentDto;
+import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentUpdateDto;
+import com.demoV1Project.domain.model.Service;
 import com.demoV1Project.domain.model.SubscriptionPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -38,7 +42,7 @@ public class SubscriptionPaymentController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody SubscriptionPaymentDto paymentDto) throws URISyntaxException {
+    public ResponseEntity<String> save(@RequestBody SubscriptionPaymentCreateDto paymentDto) throws URISyntaxException {
         if (paymentDto.getUserId() == null) {
             return ResponseEntity.badRequest().body("User ID is required");
         }
@@ -52,6 +56,15 @@ public class SubscriptionPaymentController {
                 })
                 .orElse(ResponseEntity.badRequest().body("User not found"));
     }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody SubscriptionPaymentUpdateDto updateDto){
+        SubscriptionPayment subscriptionPayment = paymentService.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("Service Not Found"));
+        paymentMapper.updateEntity(updateDto, subscriptionPayment);
+        paymentService.save(subscriptionPayment);
+        return ResponseEntity.ok("Service Updated Successfully");
+    }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {

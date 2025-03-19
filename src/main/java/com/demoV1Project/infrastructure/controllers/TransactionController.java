@@ -4,7 +4,10 @@ import com.demoV1Project.application.mapper.TransactionMapper;
 import com.demoV1Project.application.service.AppointmentService;
 import com.demoV1Project.application.service.BusinessService;
 import com.demoV1Project.application.service.TransactionService;
+import com.demoV1Project.domain.dto.BusinessDto.BusinessUpdateDto;
+import com.demoV1Project.domain.dto.TransactionDto.TransactionCreateDto;
 import com.demoV1Project.domain.dto.TransactionDto.TransactionDto;
+import com.demoV1Project.domain.dto.TransactionDto.TransactionUpdateDto;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Transaction;
@@ -43,18 +46,17 @@ public class TransactionController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody TransactionDto transactionDto) throws URISyntaxException {
-        if (transactionDto.getAppointmentId() == null || transactionDto.getBusinessId() == null) {
-            return ResponseEntity.badRequest().body("Appointment ID and Business ID are required");
-        }
+    public ResponseEntity<String> save(@RequestBody TransactionCreateDto transactionDto) throws URISyntaxException {
 
         Optional<Appointment> appointmentOptional = appointmentService.findById(transactionDto.getAppointmentId());
         Optional<Business> businessOptional = businessService.findById(transactionDto.getBusinessId());
 
+        if (transactionDto.getAppointmentId() == null || transactionDto.getBusinessId() == null) {
+            return ResponseEntity.badRequest().body("Appointment ID and Business ID are required");
+        }
         if (appointmentOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Appointment not found");
         }
-
         if (businessOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("Business not found");
         }
@@ -66,6 +68,15 @@ public class TransactionController {
         transactionService.save(transaction);
 
         return ResponseEntity.created(new URI("/api/v0/transaction/save")).body("Transaction saved successfully");
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody TransactionUpdateDto transactionUpdateDto) {
+        Transaction transaction = transactionService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+        transactionMapper.updateEntity(transactionUpdateDto, transaction); // Usa el mapper para actualizar
+        transactionService.save(transaction);
+        return ResponseEntity.ok("Transaction updated successfully");
     }
 
     @DeleteMapping("/delete/{id}")

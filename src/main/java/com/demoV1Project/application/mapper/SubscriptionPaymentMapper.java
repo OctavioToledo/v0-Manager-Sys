@@ -1,6 +1,8 @@
 package com.demoV1Project.application.mapper;
 
+import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentCreateDto;
 import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentDto;
+import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentUpdateDto;
 import com.demoV1Project.domain.model.SubscriptionPayment;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -23,13 +25,16 @@ public class SubscriptionPaymentMapper {
         return dto;
     }
 
-    public SubscriptionPayment toEntity(SubscriptionPaymentDto dto) {
-        return modelMapper.map(dto, SubscriptionPayment.class);
+    public SubscriptionPayment toEntity(SubscriptionPaymentCreateDto subscriptionPaymentCreateDto) {
+        return modelMapper.map(subscriptionPaymentCreateDto, SubscriptionPayment.class);
     }
 
     public List<SubscriptionPaymentDto> toDtoList(List<SubscriptionPayment> payments) {
         return payments.stream()
                 .map(this::toDto)
                 .collect(Collectors.toList());
+    }
+    public void updateEntity(SubscriptionPaymentUpdateDto subscriptionPaymentUpdateDto, SubscriptionPayment subscriptionPayment){
+        modelMapper.map(subscriptionPaymentUpdateDto, subscriptionPayment);
     }
 }
