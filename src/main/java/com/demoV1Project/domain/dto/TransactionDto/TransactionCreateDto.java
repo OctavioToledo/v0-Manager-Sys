@@ -13,7 +13,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 public class TransactionCreateDto {
+    private Long id;
     private BigDecimal amount;
+    private String paymentMethod;
     private Date date;
     private String description;
     private Long appointmentId;

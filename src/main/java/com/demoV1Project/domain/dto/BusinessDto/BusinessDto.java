@@ -22,7 +22,7 @@ public class BusinessDto {
     private String logo;
     private String openingHours;
     private String workDays;
-    private User user;
+    private Long userId;
     private Category category;
     private Address address;
 

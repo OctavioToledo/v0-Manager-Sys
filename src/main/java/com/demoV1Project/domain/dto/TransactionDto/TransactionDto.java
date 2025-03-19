@@ -15,6 +15,7 @@ import java.util.Date;
 public class TransactionDto {
     private Long id;
     private BigDecimal amount;
+    private String paymentMethod;
     private Date date;
     private String description;
     private Long appointmentId;

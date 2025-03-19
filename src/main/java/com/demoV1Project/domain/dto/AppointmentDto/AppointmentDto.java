@@ -15,6 +15,7 @@ public class AppointmentDto {
     private Long id;
     private String status;
     private Date date;
+    private Long businessId;
     private Long employeeId;
     private Long serviceId;
     private Long userId;

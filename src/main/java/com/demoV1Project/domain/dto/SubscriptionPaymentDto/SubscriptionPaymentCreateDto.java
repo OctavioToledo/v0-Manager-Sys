@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubscriptionPaymentCreateDto {
+    private Long id;
     private BigDecimal amount;
     private LocalDateTime paymentDate;
     private LocalDateTime endDate;

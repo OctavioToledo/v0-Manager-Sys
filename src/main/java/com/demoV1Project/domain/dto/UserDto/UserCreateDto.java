@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UserCreateDto {
+    private Long id;
     private String name;
     private String phoneNumber;
     private String password;
