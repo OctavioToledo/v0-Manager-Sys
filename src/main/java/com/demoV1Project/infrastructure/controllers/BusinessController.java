@@ -57,8 +57,8 @@ public class BusinessController {
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody BusinessUpdateDto businessUpdateDto) {
         Business business = businessService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Business not found"));
-        businessService.save(business);
         businessMapper.updateEntity(businessUpdateDto, business); // Usa el mapper para actualizar
+        businessService.save(business);
         return ResponseEntity.ok("Business updated successfully");
     }
 

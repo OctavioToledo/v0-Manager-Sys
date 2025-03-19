@@ -3,7 +3,11 @@ package com.demoV1Project.infrastructure.controllers;
 import com.demoV1Project.application.mapper.ServiceMapper;
 import com.demoV1Project.application.service.BusinessService;
 import com.demoV1Project.application.service.ServiceService;
+import com.demoV1Project.domain.dto.EmployeeDto.EmployeeUpdateDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceCreateDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
+import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,19 +40,26 @@ public class ServiceController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody ServiceDto serviceDto) {
-        if (serviceDto.getBusinessId() == null) {
+    public ResponseEntity<String> save(@RequestBody ServiceCreateDto serviceCreateDto) {
+        if (serviceCreateDto.getBusinessId() == null) {
             return ResponseEntity.badRequest().body("Business ID is required");
         }
-
-        return businessService.findById(serviceDto.getBusinessId())
+        return businessService.findById(serviceCreateDto.getBusinessId())
                 .map(business -> {
-                    Service service = serviceMapper.toEntity(serviceDto);
+                    Service service = serviceMapper.toEntity(serviceCreateDto);
                     service.setBusiness(business);
                     serviceService.save(service);
                     return ResponseEntity.status(HttpStatus.CREATED).body("Service saved successfully");
                 })
                 .orElse(ResponseEntity.badRequest().body("Business not found"));
+    }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ServiceUpdateDto serviceUpdateDto){
+        Service service = serviceService.findById(id)
+                .orElseThrow(()-> new IllegalArgumentException("Service Not Found"));
+        serviceMapper.updateEntity(serviceUpdateDto, service);
+        serviceService.save(service);
+        return ResponseEntity.ok("Service Updated Successfully");
     }
 
     @DeleteMapping("/delete/{id}")

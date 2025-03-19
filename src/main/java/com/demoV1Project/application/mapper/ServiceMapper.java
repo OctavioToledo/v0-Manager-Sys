@@ -1,6 +1,8 @@
 package com.demoV1Project.application.mapper;
 
+import com.demoV1Project.domain.dto.ServiceDto.ServiceCreateDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.Service;
 import org.modelmapper.ModelMapper;
@@ -28,8 +30,12 @@ public class ServiceMapper {
         return serviceDto;
     }
 
-    public Service toEntity(ServiceDto serviceDto) {
-        return modelMapper.map(serviceDto, Service.class);
+    public Service toEntity(ServiceCreateDto serviceCreateDto) {
+        return modelMapper.map(serviceCreateDto, Service.class);
+    }
+
+    public void updateEntity(ServiceUpdateDto serviceUpdateDto, Service service){
+        modelMapper.map(serviceUpdateDto, service);
     }
 
     public List<ServiceDto> toDtoList(List<Service> services) {
