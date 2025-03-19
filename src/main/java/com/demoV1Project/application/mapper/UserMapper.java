@@ -1,6 +1,11 @@
 package com.demoV1Project.application.mapper;
 
+import com.demoV1Project.domain.dto.AppointmentDto.AppointmentUpdateDto;
+import com.demoV1Project.domain.dto.UserDto.UserCreateDto;
+import com.demoV1Project.domain.dto.UserDto.UserDetailDto;
 import com.demoV1Project.domain.dto.UserDto.UserDto;
+import com.demoV1Project.domain.dto.UserDto.UserUpdateDto;
+import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -20,10 +25,18 @@ public class UserMapper {
     public UserDto toDto(User user) {
         return modelMapper.map(user, UserDto.class);
     }
+    public UserDetailDto toDetailDto(User user) {
+        return modelMapper.map(user, UserDetailDto.class);
+    }
 
-    public User toEntity(UserDto dto) {
+    public User toEntity(UserCreateDto dto) {
         return modelMapper.map(dto, User.class);
     }
+
+    public void updateEntity(UserUpdateDto userUpdateDto, User user) {
+        modelMapper.map(userUpdateDto, user);
+    }
+
 
     public List<UserDto> toDtoList(List<User> users) {
         return users.stream()

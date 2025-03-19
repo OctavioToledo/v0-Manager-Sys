@@ -1,4 +1,4 @@
-package com.demoV1Project.domain.dto.UserDto;
+package com.demoV1Project.domain.dto.CategoryDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserShortDto {
+public class CategoryUpdateDto {
     private Long id;
     private String name;
 }

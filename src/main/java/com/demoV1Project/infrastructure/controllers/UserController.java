@@ -2,7 +2,11 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.UserMapper;
 import com.demoV1Project.application.service.UserService;
+import com.demoV1Project.domain.dto.UserDto.UserCreateDto;
+import com.demoV1Project.domain.dto.UserDto.UserDetailDto;
 import com.demoV1Project.domain.dto.UserDto.UserDto;
+import com.demoV1Project.domain.dto.UserDto.UserUpdateDto;
+import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -36,30 +40,29 @@ public class UserController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<UserDetailDto> detailById(@PathVariable Long id) {
+        return userService.findById(id)
+                .map(userMapper::toDetailDto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody UserDto userDto) throws URISyntaxException {
-        User user = userMapper.toEntity(userDto);
+    public ResponseEntity<String> save(@RequestBody UserCreateDto userCreateDto) throws URISyntaxException {
+        User user = userMapper.toEntity(userCreateDto);
         userService.save(user);
         return ResponseEntity.created(new URI("/api/v0/user/save")).body("User saved successfully");
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody UserDto userDto) {
-        Optional<User> userOptional = userService.findById(id);
-
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            user.setName(userDto.getName());
-            user.setPassword(userDto.getPassword());
-            user.setPhoneNumber(userDto.getPhoneNumber());
-            user.setEmail(userDto.getEmail());
-            user.setRole(userDto.getRole());
-
-            userService.save(user);
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {
+        User user = userService.findById(id).orElseThrow(()-> new IllegalArgumentException("User Not Found"));
+        userMapper.updateEntity(userUpdateDto, user); // Usa el mapper para actualizar
+        userService.save(user);
             return ResponseEntity.ok("User updated successfully");
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
-    }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {

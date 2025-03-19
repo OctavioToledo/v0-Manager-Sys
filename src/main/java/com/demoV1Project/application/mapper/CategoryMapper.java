@@ -1,7 +1,10 @@
 package com.demoV1Project.application.mapper;
 
 import com.demoV1Project.domain.dto.CategoryDto.CategoryDto;
+import com.demoV1Project.domain.dto.CategoryDto.CategoryUpdateDto;
+import com.demoV1Project.domain.dto.UserDto.UserUpdateDto;
 import com.demoV1Project.domain.model.Category;
+import com.demoV1Project.domain.model.User;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,9 @@ public class CategoryMapper {
     }
     public Category toEntity(CategoryDto categoryDto){
         return modelMapper.map(categoryDto, Category.class);
+    }
+    public void updateEntity(CategoryUpdateDto categoryUpdateDto, Category category) {
+        modelMapper.map(categoryUpdateDto, category);
     }
 
     public List<CategoryDto> toDtoList(List<Category> categories) {

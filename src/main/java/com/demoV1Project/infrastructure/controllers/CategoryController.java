@@ -1,6 +1,7 @@
 package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.domain.dto.CategoryDto.CategoryDto;
+import com.demoV1Project.domain.dto.CategoryDto.CategoryUpdateDto;
 import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.application.service.CategoryService;
 import com.demoV1Project.application.mapper.CategoryMapper;
@@ -43,10 +44,10 @@ public class CategoryController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody CategoryUpdateDto categoryUpdateDto) {
         return categoryService.findById(id)
                 .map(existingCategory -> {
-                    existingCategory.setName(categoryDto.getName());
+                    existingCategory.setName(categoryUpdateDto.getName());
                     categoryService.save(existingCategory);
                     return ResponseEntity.ok("Field Updated");
                 })
