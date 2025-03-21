@@ -1,6 +1,7 @@
 package com.demoV1Project.application.mapper;
 
 import com.demoV1Project.domain.dto.BusinessDto.*;
+import com.demoV1Project.domain.dto.UserDto.UserShortDto;
 import com.demoV1Project.domain.model.Business;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,11 @@ public class BusinessMapper {
         return modelMapper.map(business, BusinessDto.class);
     }
     public BusinessDetailDto toDetailDto(Business business) {
-        return modelMapper.map(business, BusinessDetailDto.class);
+        BusinessDetailDto dto = modelMapper.map(business, BusinessDetailDto.class);
+        if (business.getUser() != null) {
+            dto.setOwner(new UserShortDto(business.getUser().getId(), business.getUser().getName()));
+        }
+        return dto;
     }
 
 

@@ -14,4 +14,5 @@ public interface AppointmentService {
     void save(Appointment appointment);
     void deleteById(Long id);
     Appointment createAndSaveAppointment(AppointmentCreateDto appointmentCreateDto);
+
 }

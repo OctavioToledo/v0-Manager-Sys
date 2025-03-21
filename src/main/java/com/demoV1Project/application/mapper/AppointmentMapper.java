@@ -21,8 +21,15 @@ public class AppointmentMapper {
     }
 
     public AppointmentDto toDto(Appointment appointment) {
-        return modelMapper.map(appointment, AppointmentDto.class);
+        System.out.println("Business en Appointment: " + appointment.getBusiness()); // Debug
+        AppointmentDto dto = modelMapper.map(appointment, AppointmentDto.class);
+        if (appointment.getBusiness() != null) {
+            dto.setBusinessId(appointment.getBusiness().getId());
+            System.out.println("Business ID seteado: " + dto.getBusinessId()); // Debug
+        }
+        return dto;
     }
+
 
     public Appointment toEntity(AppointmentCreateDto appointmentCreateDto) {
         return modelMapper.map(appointmentCreateDto, Appointment.class);

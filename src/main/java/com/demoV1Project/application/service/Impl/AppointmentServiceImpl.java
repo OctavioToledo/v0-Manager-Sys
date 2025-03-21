@@ -1,15 +1,13 @@
 package com.demoV1Project.application.service.Impl;
 
-import com.demoV1Project.application.service.EmployeeService;
-import com.demoV1Project.application.service.ServiceService;
-import com.demoV1Project.application.service.UserService;
+import com.demoV1Project.application.service.*;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.model.Appointment;
+import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.User;
 import com.demoV1Project.infrastructure.persistence.AppointmentDao;
-import com.demoV1Project.application.service.AppointmentService;
 import com.demoV1Project.util.enums.AppointmentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
     private final UserService userService;
+
+    @Autowired
+    private final BusinessService businessService;
 
     @Override
     public List<Appointment> findAll() {
@@ -60,6 +61,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         Employee employee = employeeService.findById(appointmentCreateDto.getEmployeeId())
                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
+        Business business = businessService.findById(appointmentCreateDto.getBusinessId())
+                .orElseThrow(()-> new IllegalArgumentException("Business not found"));
+
         com.demoV1Project.domain.model.Service service = serviceService.findById(appointmentCreateDto.getServiceId())
                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
 
@@ -70,6 +74,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = Appointment.builder()
                 .date(appointmentCreateDto.getDate())
                 .status(AppointmentStatus.valueOf(appointmentCreateDto.getStatus()))
+                .business(business)
                 .employee(employee)
                 .service(service)
                 .user(user)

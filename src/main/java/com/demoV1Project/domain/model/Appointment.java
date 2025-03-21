@@ -36,8 +36,8 @@ public class Appointment {
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
     private Transaction transaction;
 
-    @ManyToOne
-    @JoinColumn(name = "business_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "business_id", nullable = false)
     @JsonIgnore
     private Business business;
 
