@@ -13,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EmployeeUpdateDto {
     private String name;
+    private String role;
     private String workSchedule;
     private String profilePicture;
     private List<Long> serviceIds;

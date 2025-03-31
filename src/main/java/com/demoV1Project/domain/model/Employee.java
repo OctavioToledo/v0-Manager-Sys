@@ -20,6 +20,7 @@ public class Employee {
     private Long id;
 
     private String name;
+    private String role;
 
     @Column(name = "work_schedule")
     private String workSchedule;

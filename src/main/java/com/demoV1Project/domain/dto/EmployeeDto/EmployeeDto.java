@@ -15,6 +15,7 @@ import java.util.List;
 public class EmployeeDto {
     private Long id;
     private String name;
+    private String role;
     private String workSchedule;
     private String profilePicture;
     private Long businessId;

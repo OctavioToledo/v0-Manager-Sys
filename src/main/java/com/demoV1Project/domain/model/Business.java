@@ -51,7 +51,8 @@ public class Business {
     private List<Employee> employees;
 
     @OneToMany(
-            mappedBy = "business", cascade = CascadeType.ALL
+            mappedBy = "business", cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
     )
     private List<Service> services;
 

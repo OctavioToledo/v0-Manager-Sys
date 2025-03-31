@@ -2,9 +2,11 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.BusinessMapper;
 import com.demoV1Project.application.service.BusinessService;
+import com.demoV1Project.application.service.CategoryService;
 import com.demoV1Project.domain.dto.BusinessDto.*;
 import com.demoV1Project.domain.model.Address;
 import com.demoV1Project.domain.model.Business;
+import com.demoV1Project.domain.model.Category;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +26,9 @@ public class BusinessController {
 
     @Autowired
     private final BusinessMapper businessMapper;
+
+    @Autowired
+    private final CategoryService categoryService;
 
     @GetMapping("/findAll")
     public ResponseEntity<List<BusinessDto>> findAll() {
@@ -45,6 +50,24 @@ public class BusinessController {
                 .map(business -> ResponseEntity.ok(businessMapper.toShortDto(business)))
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<BusinessDto>> searchBusinesses(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String city) {
+
+        Category categoryObj = null;
+        if (category != null && !category.isEmpty()) {
+            categoryObj = categoryService.findByName(category).orElse(null);
+        }
+
+        List<BusinessDto> results = businessService.searchBusinesses(name, categoryObj, city);
+        return ResponseEntity.ok(results);
+    }
+
+
+
 
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestBody BusinessCreateDto businessCreateDto) throws URISyntaxException {

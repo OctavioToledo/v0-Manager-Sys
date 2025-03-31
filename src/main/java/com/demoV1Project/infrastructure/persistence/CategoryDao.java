@@ -12,4 +12,5 @@ public interface CategoryDao {
     void save(Category category);
     //void update(Category category);
     void deleteById(Long id);
+    Optional<Category> findByName(String name);
 }

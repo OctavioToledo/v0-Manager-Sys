@@ -15,6 +15,7 @@ import java.util.List;
 public class EmployeeDetailDto {
     private Long id;
     private String name;
+    private String role;
     private String profilePicture;
     private List<ServiceShortDto> services;
 }

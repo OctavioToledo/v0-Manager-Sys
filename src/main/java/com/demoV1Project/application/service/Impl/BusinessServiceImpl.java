@@ -1,6 +1,8 @@
 package com.demoV1Project.application.service.Impl;
 
+import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
 import com.demoV1Project.domain.model.Business;
+import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.infrastructure.persistence.BusinessDao;
 import com.demoV1Project.application.service.BusinessService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +43,12 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
+    public List<BusinessDto> searchBusinesses(String name, Category category, String city) {
+        return businessDao.searchBusinesses(name, category, city);
+    }
+    /*
+    @Override
     public boolean existsById(Long id) {
         return false;
-    }
+    } */
 }

@@ -20,6 +20,11 @@ public class CategoryDaoImpl implements CategoryDao {
     }
 
     @Override
+    public Optional<Category> findByName(String name) {
+        return categoryRepository.findByName(name);
+    }
+
+    @Override
     public Optional<Category> findById(Long id) {
         return categoryRepository.findById(id);
     }
