@@ -20,6 +20,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v0/subscription")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class SubscriptionPaymentController {
 

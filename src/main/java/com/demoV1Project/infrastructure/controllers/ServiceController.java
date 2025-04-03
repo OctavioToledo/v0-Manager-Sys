@@ -3,11 +3,9 @@ package com.demoV1Project.infrastructure.controllers;
 import com.demoV1Project.application.mapper.ServiceMapper;
 import com.demoV1Project.application.service.BusinessService;
 import com.demoV1Project.application.service.ServiceService;
-import com.demoV1Project.domain.dto.EmployeeDto.EmployeeUpdateDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceCreateDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
-import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,9 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/v0/service")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class ServiceController {
 

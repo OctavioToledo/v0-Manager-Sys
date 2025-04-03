@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/v0/category")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class CategoryController {
 

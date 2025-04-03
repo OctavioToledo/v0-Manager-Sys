@@ -16,9 +16,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/v0/appointment")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class AppointmentController {
 

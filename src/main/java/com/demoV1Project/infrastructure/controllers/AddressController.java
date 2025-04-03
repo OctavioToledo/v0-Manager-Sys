@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/v0/address")
+@CrossOrigin(origins = "http://localhost:5173")
 @RequiredArgsConstructor
 public class AddressController {
 
