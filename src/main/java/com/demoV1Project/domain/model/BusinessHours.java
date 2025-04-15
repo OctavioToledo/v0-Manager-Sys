@@ -23,8 +23,18 @@ public class BusinessHours {
         @Enumerated(EnumType.STRING) // Guarda el nombre del día (ej: "MONDAY")
         private DayOfWeek dayOfWeek;
 
-        private LocalTime openingTime; // Ej: 09:00
-        private LocalTime closingTime; // Ej: 18:00
+        @Column(name = "opening_morning_time")
+        private LocalTime openingMorningTime; // Ej: 09:00
+
+        @Column(name = "closing_morning_time")
+        private LocalTime closingMorningTime; // Ej: 12:30
+
+        @Column(name = "opening_evening_time")
+        private LocalTime openingEveningTime; // Ej: 16:00
+
+        @Column(name = "closing_evening_time")
+        private LocalTime closingEveningTime; // Ej: 20:00
+
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "business_id")
