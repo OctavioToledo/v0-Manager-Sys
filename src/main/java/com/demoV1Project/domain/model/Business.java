@@ -44,6 +44,10 @@ public class Business {
     @JoinColumn(name = "address_id")
     private Address address;
 
+    @OneToMany(mappedBy = "business", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<BusinessHours> businessHours;
+
     @OneToMany(
             mappedBy = "business",
             cascade = CascadeType.ALL

@@ -1,0 +1,37 @@
+package com.demoV1Project.infrastructure.controllers;
+
+import com.demoV1Project.application.service.BusinessHoursService;
+import com.demoV1Project.domain.dto.BusinessHours.BusinessHoursDto;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v0/business/{businessId}/hours")
+@RequiredArgsConstructor
+public class BusinessHoursController {
+    private final BusinessHoursService businessHoursService;
+
+    @PostMapping
+    public ResponseEntity<List<BusinessHoursDto>> saveHours(
+            @PathVariable Long businessId,
+            @RequestBody List<BusinessHoursDto> requests
+    ) {
+        return ResponseEntity.ok(
+                businessHoursService.saveHoursForBusiness(businessId, requests)
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BusinessHoursDto>> getHours(@PathVariable Long businessId) {
+        return ResponseEntity.ok(businessHoursService.findByBusinessId(businessId));
+    }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteHours(@PathVariable Long businessId) {
+        businessHoursService.deleteByBusinessId(businessId);
+        return ResponseEntity.noContent().build();
+    }
+}
