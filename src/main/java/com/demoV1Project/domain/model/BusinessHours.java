@@ -1,9 +1,9 @@
 package com.demoV1Project.domain.model;
 
+import com.demoV1Project.util.enums.DayOfWeek;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 @Entity
