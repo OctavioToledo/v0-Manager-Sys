@@ -2,12 +2,11 @@ package com.demoV1Project.domain.dto.BusinessHours;
 
 import com.demoV1Project.util.enums.DayOfWeek;
 import jakarta.persistence.Column;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import lombok.*;
+import org.springframework.lang.Nullable;
 
-import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -16,9 +15,8 @@ import java.time.LocalTime;
 public class BusinessHoursDto {
 
         private DayOfWeek dayOfWeek;
-        private String openingMorningTime;
+        private String openingMorningTime;  // Formato HH:mm
         private String closingMorningTime;
-        private String openingEveningTime;
+        private String openingEveningTime;  // Nullable
         private String closingEveningTime;
-
 }

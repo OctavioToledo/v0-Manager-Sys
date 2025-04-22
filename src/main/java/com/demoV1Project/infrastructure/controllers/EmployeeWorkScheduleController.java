@@ -24,7 +24,7 @@ public class EmployeeWorkScheduleController {
         return ResponseEntity.ok(service.saveAllForEmployee(employeeId, requests));
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<EmployeeWorkScheduleDto>> findByEmployeeId(
             @PathVariable Long employeeId
     ) {

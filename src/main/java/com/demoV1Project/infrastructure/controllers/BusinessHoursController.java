@@ -2,6 +2,7 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.service.BusinessHoursService;
 import com.demoV1Project.domain.dto.BusinessHours.BusinessHoursDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ public class BusinessHoursController {
     @PostMapping
     public ResponseEntity<List<BusinessHoursDto>> saveHours(
             @PathVariable Long businessId,
-            @RequestBody List<BusinessHoursDto> requests
+           @Valid @RequestBody List<BusinessHoursDto> requests
     ) {
         return ResponseEntity.ok(
                 businessHoursService.saveHoursForBusiness(businessId, requests)
