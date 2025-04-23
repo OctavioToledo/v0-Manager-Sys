@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v0/employees/{employeeId}/hours")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class EmployeeWorkScheduleController {
     private final EmployeeWorkScheduleService service;
 
