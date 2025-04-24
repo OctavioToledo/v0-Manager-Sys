@@ -1,11 +1,8 @@
 package com.demoV1Project.domain.dto.BusinessHours;
 
-import com.demoV1Project.util.enums.DayOfWeek;
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+
 import lombok.*;
-import org.springframework.lang.Nullable;
+import java.time.DayOfWeek;
 
 
 @Data

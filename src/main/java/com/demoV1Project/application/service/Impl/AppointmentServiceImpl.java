@@ -1,21 +1,29 @@
 package com.demoV1Project.application.service.Impl;
 
+import com.demoV1Project.application.exceptions.InvalidAppointmentGridException;
 import com.demoV1Project.application.service.*;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
-import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
-import com.demoV1Project.domain.model.Appointment;
-import com.demoV1Project.domain.model.Business;
-import com.demoV1Project.domain.model.Employee;
-import com.demoV1Project.domain.model.User;
+
+import com.demoV1Project.domain.dto.AppointmentGridDto.AppointmentGridDto;
+import com.demoV1Project.domain.dto.AppointmentGridDto.EmployeeScheduleGridDto;
+import com.demoV1Project.domain.dto.AppointmentGridDto.TimeSlotDto;
+import com.demoV1Project.domain.model.*;
+
+import com.demoV1Project.domain.repository.*;
 import com.demoV1Project.infrastructure.persistence.AppointmentDao;
+
 import com.demoV1Project.util.enums.AppointmentStatus;
+import com.demoV1Project.util.enums.Auxiliar.TimeSlotUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-@Service
+@org.springframework.stereotype.Service
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
 
@@ -23,7 +31,17 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentDao appointmentDao;
 
     @Autowired
+    private final AppointmentRepository appointmentRepository;
+
+
+    @Autowired
     private final EmployeeService employeeService;
+
+    @Autowired
+    private final EmployeeRepository employeeRepository;
+
+    @Autowired
+    private final ServiceRepository serviceRepository;
 
     @Autowired
     private final ServiceService serviceService;
@@ -33,6 +51,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Autowired
     private final BusinessService businessService;
+
+    @Autowired
+    private final BusinessHoursRepository businessHoursRepository;
+
+    @Autowired
+    private final EmployeeWorkScheduleRepository employeeWorkScheduleRepository;
 
     @Override
     public List<Appointment> findAll() {
@@ -85,4 +109,65 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         return appointment;
     }
+
+    // METODO DE CREACION PARA LA GRILLA
+    @Override
+    public AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDate date) {
+        // Obtener el servicio y su duración
+        Service service = serviceService.findById(serviceId)
+                .orElseThrow(() -> new InvalidAppointmentGridException("Service not found with id: " + serviceId));
+        int duration = service.getDuration();
+
+        // Obtener empleados que brindan ese servicio
+        List<Employee> employees = employeeRepository.findByServicesId(serviceId);
+
+        // Obtener el horario del negocio según el día de la semana
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        BusinessHours businessHours = businessHoursRepository
+                .findByBusinessIdAndDayOfWeek(service.getBusiness().getId(), dayOfWeek)
+                .orElseThrow(() -> new InvalidAppointmentGridException("No se encontraron horarios disponibles"));
+
+        if (businessHours == null) {
+            throw new InvalidAppointmentGridException("Business hours not found for day: " + dayOfWeek);
+        }
+
+        // Generar los time slots según el horario del negocio
+        List<TimeSlotDto> timeSlots = TimeSlotUtils.generateTimeSlots(businessHours, duration);
+
+        // Para cada empleado, obtener su disponibilidad en esos time slots
+        List<EmployeeScheduleGridDto> employeeScheduleGridDtos = new ArrayList<>();
+
+        for (Employee employee : employees) {
+            // Obtener el horario del empleado para ese día
+            EmployeeWorkSchedule schedule = employeeWorkScheduleRepository
+                    .findByEmployeeIdAndDayOfWeek(employee.getId(), dayOfWeek);
+
+            // Obtener turnos reservados de ese empleado ese día
+            List<Appointment> takenAppointments = appointmentRepository
+                    .findByEmployeeIdAndDate(employee.getId(), date);
+
+            List<Boolean> availability = TimeSlotUtils.calculateAvailability(
+                    timeSlots, schedule, takenAppointments, duration
+            );
+
+            List<TimeSlotDto> timeSlotDtos = new ArrayList<>();
+            for (int i = 0; i < timeSlots.size(); i++) {
+                timeSlotDtos.add(new TimeSlotDto(timeSlots.get(i), availability.get(i)));
+            }
+
+            employeeScheduleGridDtos.add(
+                    new EmployeeScheduleGridDto(employee.getId(), employee.getName(), timeSlotDtos)
+            );
+
+        }
+
+
+        return AppointmentGridDto.builder()
+                .serviceName(service.getName())
+                .serviceDuration(duration)
+                .timeSlots(timeSlots)
+                .employeeAvailabilities(employeeScheduleGridDtos)
+                .build();
+    }
+
 }
