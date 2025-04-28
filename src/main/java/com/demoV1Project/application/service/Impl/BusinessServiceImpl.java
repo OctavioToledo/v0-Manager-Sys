@@ -1,6 +1,8 @@
 package com.demoV1Project.application.service.Impl;
 
+import com.demoV1Project.application.mapper.BusinessMapper;
 import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
+import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
 import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.infrastructure.persistence.BusinessDao;
@@ -10,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BusinessServiceImpl implements BusinessService {
@@ -17,8 +20,12 @@ public class BusinessServiceImpl implements BusinessService {
     @Autowired
     private final BusinessDao businessDao;
 
-    public BusinessServiceImpl(BusinessDao businessDao) {
+    @Autowired
+    private final BusinessMapper businessMapper;
+
+    public BusinessServiceImpl(BusinessDao businessDao, BusinessMapper businessMapper) {
         this.businessDao = businessDao;
+        this.businessMapper = businessMapper;
     }
 
 
@@ -43,12 +50,11 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public List<BusinessDto> searchBusinesses(String name, Category category, String city) {
-        return businessDao.searchBusinesses(name, category, city);
+    public List<BusinessShortDto> searchBusinesses(String name, Category category, String city) {
+        List<Business> businesses = businessDao.searchBusinesses(name, category, city);
+        return businesses.stream()
+                .map(businessMapper::toShortDto)
+                .collect(Collectors.toList());
     }
-    /*
-    @Override
-    public boolean existsById(Long id) {
-        return false;
-    } */
+
 }

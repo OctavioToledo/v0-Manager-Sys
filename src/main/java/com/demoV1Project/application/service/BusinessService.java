@@ -1,6 +1,7 @@
 package com.demoV1Project.application.service;
 
 import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
+import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
 import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Category;
 
@@ -14,7 +15,7 @@ public interface BusinessService {
     Optional<Business> findById(Long id);
     void save(Business business);
     void deleteById(Long id);
-    List<BusinessDto> searchBusinesses(String name, Category category, String city);
+    List<BusinessShortDto> searchBusinesses(String name, Category category, String city);
 
 
 }

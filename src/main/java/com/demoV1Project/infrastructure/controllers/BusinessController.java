@@ -53,17 +53,18 @@ public class BusinessController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<BusinessDto>> searchBusinesses(
+    public ResponseEntity<List<BusinessShortDto>> searchBusinesses(
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String category,
-            @RequestParam(required = false) String city) {
+            @RequestParam(required = true) String category,
+            @RequestParam(required = true) String city) {
 
         Category categoryObj = null;
         if (category != null && !category.isEmpty()) {
             categoryObj = categoryService.findByName(category).orElse(null);
         }
 
-        List<BusinessDto> results = businessService.searchBusinesses(name, categoryObj, city);
+        List<BusinessShortDto> results = businessService.searchBusinesses(name, categoryObj, city);
+
         return ResponseEntity.ok(results);
     }
 

@@ -35,11 +35,8 @@ public class BusinessDaoImpl implements BusinessDao {
     }
 
     @Override
-    public List<BusinessDto> searchBusinesses(String name, Category category, String city) {
-        List<Business> businesses = businessRepository.searchBusinesses(name, category, city);
-        return businesses.stream()
-                .map(businessMapper::toDto)
-                .collect(Collectors.toList());
+    public List<Business> searchBusinesses(String name, Category category, String city) {
+        return businessRepository.searchBusinesses(name, category, city);
     }
 
     @Override
