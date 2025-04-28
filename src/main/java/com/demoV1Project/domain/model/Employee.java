@@ -22,9 +22,6 @@ public class Employee {
     private String name;
     private String role;
 
-    @Column(name = "work_schedule")
-    private String workSchedule;
-
     @Column(name = "profile_picture")
     private String profilePicture;
 
@@ -44,5 +41,9 @@ public class Employee {
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Appointment> appointments;
+
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<EmployeeWorkSchedule> workSchedules;
 
 }

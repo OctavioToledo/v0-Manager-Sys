@@ -33,6 +33,9 @@ public class EmployeeMapper {
     public EmployeeDetailDto toDetailDto(Employee employee){
         return modelMapper.map(employee, EmployeeDetailDto.class);
     }
+    public List<EmployeeDetailDto> toDetailListDto(List<Employee> employees){
+        return employees.stream().map(this::toDetailDto).collect(Collectors.toList());
+    }
 
     public Employee toEntity(EmployeeCreateDto employeeCreateDto) {
         return modelMapper.map(employeeCreateDto, Employee.class);

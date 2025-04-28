@@ -1,22 +1,38 @@
 package com.demoV1Project.application.service.Impl;
 
+import com.demoV1Project.application.mapper.ServiceMapper;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceShortDto;
+import com.demoV1Project.domain.model.Service;
 import com.demoV1Project.infrastructure.persistence.ServiceDao;
 import com.demoV1Project.application.service.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 import java.util.Optional;
 
-@Service
+@org.springframework.stereotype.Service
 public class ServiceServiceImpl implements ServiceService {
 
     @Autowired
     private final ServiceDao serviceDao;
 
-    public ServiceServiceImpl(ServiceDao serviceDao) {
+    @Autowired
+    private final ServiceMapper serviceMapper;
+
+
+    public ServiceServiceImpl(ServiceDao serviceDao, ServiceMapper serviceMapper) {
         this.serviceDao = serviceDao;
+        this.serviceMapper = serviceMapper;
     }
+
+
+    @Override
+    public List<ServiceShortDto> findByBusinessId(Long businessId) {
+        List<Service> services = serviceDao.findByBusinessId(businessId);
+        return serviceMapper.toShortDtoList(services);
+    }
+
 
     @Override
     public List<com.demoV1Project.domain.model.Service> findAll() {

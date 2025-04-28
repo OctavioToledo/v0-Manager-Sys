@@ -17,5 +17,5 @@ public class EmployeeDetailDto {
     private String name;
     private String role;
     private String profilePicture;
-    private List<ServiceShortDto> services;
+   // private List<ServiceShortDto> services;
 }

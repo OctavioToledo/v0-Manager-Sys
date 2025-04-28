@@ -12,4 +12,6 @@ public interface EmployeeDao {
     Optional<Employee> findById(Long id);
     void save(Employee employee);
     void deleteById(Long id);
+    List<Employee> findByBusinessId(Long businessId);
+
 }

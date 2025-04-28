@@ -12,5 +12,6 @@ import lombok.NoArgsConstructor;
 public class ServiceShortDto {
     private Long id;
     private String name;
+    private Integer duration;
     private Double price;
 }

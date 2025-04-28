@@ -1,5 +1,6 @@
 package com.demoV1Project.domain.dto.EmployeeDto;
 
+import com.demoV1Project.domain.model.EmployeeWorkSchedule;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class EmployeeUpdateDto {
     private String workSchedule;
     private String profilePicture;
     private List<Long> serviceIds;
+    private List<EmployeeWorkSchedule> workSchedules;
 }

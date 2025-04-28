@@ -2,6 +2,7 @@ package com.demoV1Project.application.mapper;
 
 import com.demoV1Project.domain.dto.ServiceDto.ServiceCreateDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceShortDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.Service;
@@ -43,4 +44,14 @@ public class ServiceMapper {
                 .map(this::toDto)
                 .collect(Collectors.toList());
     }
+    private ServiceShortDto toShortDto(Service service) {
+        return modelMapper.map(service, ServiceShortDto.class);
+    }
+    public List<ServiceShortDto> toShortDtoList(List<Service> services) {
+        return services.stream()
+                .map(this::toShortDto)
+                .collect(Collectors.toList());
+    }
+
+
 }

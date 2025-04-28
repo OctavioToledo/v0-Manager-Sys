@@ -1,5 +1,6 @@
 package com.demoV1Project.application.service;
 
+import com.demoV1Project.domain.dto.ServiceDto.ServiceShortDto;
 import com.demoV1Project.domain.model.Service;
 
 import java.util.List;
@@ -10,5 +11,6 @@ public interface ServiceService {
     Optional<Service> findById(Long id);
     void save(Service service);
     void deleteById(Long id);
+    List<ServiceShortDto> findByBusinessId(Long businessId);
 
 }

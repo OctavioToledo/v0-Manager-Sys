@@ -5,6 +5,7 @@ import com.demoV1Project.application.service.BusinessService;
 import com.demoV1Project.application.service.ServiceService;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceCreateDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceShortDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
 import com.demoV1Project.domain.model.Service;
 import lombok.RequiredArgsConstructor;
@@ -23,11 +24,12 @@ public class ServiceController {
     private final BusinessService businessService;
     private final ServiceMapper serviceMapper;
 
-    @GetMapping("/findAll")
-    public ResponseEntity<List<ServiceDto>> findAll() {
-        List<Service> services = serviceService.findAll();
-        return ResponseEntity.ok(serviceMapper.toDtoList(services));
+    @GetMapping("/findAll/{businessId}")
+    public ResponseEntity<List<ServiceShortDto>> findByBusinessId(@RequestParam Long businessId) {
+        List<ServiceShortDto> services = serviceService.findByBusinessId(businessId);
+        return ResponseEntity.ok(services);
     }
+
 
     @GetMapping("/find/{id}")
     public ResponseEntity<ServiceDto> findById(@PathVariable Long id) {

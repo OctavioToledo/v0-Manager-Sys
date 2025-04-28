@@ -12,5 +12,7 @@ public interface ServiceDao {
     Optional<Service> findById(Long id);
     void save(Service service);
     void deleteById(Long id);
+    List<Service> findByBusinessId(Long businessId);
+
 
 }

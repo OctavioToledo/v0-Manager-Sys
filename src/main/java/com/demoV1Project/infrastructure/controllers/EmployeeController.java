@@ -25,12 +25,13 @@ public class EmployeeController {
     private final BusinessService businessService;
     private final EmployeeMapper employeeMapper;
 
-    @GetMapping("/findAll")
-    public ResponseEntity<List<EmployeeDto>> findAll() {
-        List<Employee> employees = employeeService.findAll();
-        List<EmployeeDto> employeeDtos = employeeMapper.toDtoList(employees);
+    @GetMapping("/findAll/{businessId}")
+    public ResponseEntity<List<EmployeeDetailDto>> findByBusinessId(@RequestParam Long businessId) {
+        List<EmployeeDetailDto> employeeDtos = employeeService.findByBusinessId(businessId);
         return ResponseEntity.ok(employeeDtos);
     }
+
+
 
     @GetMapping("/find/{id}")
     public ResponseEntity<EmployeeDto> findById(@PathVariable Long id) {
