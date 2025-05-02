@@ -12,5 +12,6 @@ public interface ServiceService {
     void save(Service service);
     void deleteById(Long id);
     List<ServiceShortDto> findByBusinessId(Long businessId);
+    List<Service> findAllById(List<Long> ids);
 
 }

@@ -4,7 +4,6 @@ import com.demoV1Project.application.mapper.BusinessMapper;
 import com.demoV1Project.application.service.BusinessService;
 import com.demoV1Project.application.service.CategoryService;
 import com.demoV1Project.domain.dto.BusinessDto.*;
-import com.demoV1Project.domain.model.Address;
 import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Category;
 import lombok.RequiredArgsConstructor;

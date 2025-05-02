@@ -25,6 +25,11 @@ public class ServiceDaoImpl implements ServiceDao {
         return serviceRepository.findByBusinessId(businessId);
     }
 
+    @Override
+    public List<Service> findAllById(List<Long> ids) {
+        return serviceRepository.findAllById(ids);
+    }
+
 
     @Override
     public List<Service> findAll() {

@@ -24,7 +24,7 @@ public class ServiceController {
     private final BusinessService businessService;
     private final ServiceMapper serviceMapper;
 
-    @GetMapping("/findAll/{businessId}")
+    @GetMapping("/findAll/")
     public ResponseEntity<List<ServiceShortDto>> findByBusinessId(@RequestParam Long businessId) {
         List<ServiceShortDto> services = serviceService.findByBusinessId(businessId);
         return ResponseEntity.ok(services);

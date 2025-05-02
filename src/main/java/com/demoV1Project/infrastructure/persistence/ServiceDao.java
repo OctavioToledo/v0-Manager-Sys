@@ -13,6 +13,6 @@ public interface ServiceDao {
     void save(Service service);
     void deleteById(Long id);
     List<Service> findByBusinessId(Long businessId);
-
+    List<Service> findAllById(List<Long> ids);
 
 }

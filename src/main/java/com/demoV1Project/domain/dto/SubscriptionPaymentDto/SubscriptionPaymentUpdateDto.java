@@ -1,5 +1,7 @@
 package com.demoV1Project.domain.dto.SubscriptionPaymentDto;
 
+import com.demoV1Project.util.enums.SubscriptionPaymentUtils.SubscriptionPaymentMethod;
+import com.demoV1Project.util.enums.SubscriptionPaymentUtils.SubscriptionPaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,7 @@ public class SubscriptionPaymentUpdateDto {
     private BigDecimal amount;
     private LocalDateTime paymentDate;
     private LocalDateTime endDate;
-    private String paymentMethod;
-    private String status;
+    private SubscriptionPaymentMethod paymentMethod;
+    private SubscriptionPaymentStatus status;
     private String description;
 }

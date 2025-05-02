@@ -33,6 +33,11 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceMapper.toShortDtoList(services);
     }
 
+    @Override
+    public List<Service> findAllById(List<Long> ids) {
+        return serviceDao.findAllById(ids);
+    }
+
 
     @Override
     public List<com.demoV1Project.domain.model.Service> findAll() {

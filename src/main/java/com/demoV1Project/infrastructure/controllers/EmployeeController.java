@@ -1,5 +1,6 @@
 package com.demoV1Project.infrastructure.controllers;
 
+import com.demoV1Project.application.service.ServiceService;
 import com.demoV1Project.domain.dto.EmployeeDto.EmployeeCreateDto;
 import com.demoV1Project.domain.dto.EmployeeDto.EmployeeDetailDto;
 import com.demoV1Project.domain.dto.EmployeeDto.EmployeeDto;
@@ -9,6 +10,7 @@ import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.application.service.BusinessService;
 import com.demoV1Project.application.service.EmployeeService;
 import com.demoV1Project.application.mapper.EmployeeMapper;
+import com.demoV1Project.domain.model.Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +26,9 @@ public class EmployeeController {
     private final EmployeeService employeeService;
     private final BusinessService businessService;
     private final EmployeeMapper employeeMapper;
+    private final ServiceService serviceService;
 
-    @GetMapping("/findAll/{businessId}")
+    @GetMapping("/findAll/")
     public ResponseEntity<List<EmployeeDetailDto>> findByBusinessId(@RequestParam Long businessId) {
         List<EmployeeDetailDto> employeeDtos = employeeService.findByBusinessId(businessId);
         return ResponseEntity.ok(employeeDtos);
@@ -59,11 +62,19 @@ public class EmployeeController {
                 .map(business -> {
                     Employee employee = employeeMapper.toEntity(employeeCreateDto);
                     employee.setBusiness(business);
+
+                    // 🔽 Agregamos esto:
+                    if (employeeCreateDto.getServiceIds() != null && !employeeCreateDto.getServiceIds().isEmpty()) {
+                        List<Service> services = serviceService.findAllById(employeeCreateDto.getServiceIds());
+                        employee.setServices(services);
+                    }
+
                     employeeService.save(employee);
                     return ResponseEntity.status(HttpStatus.CREATED).body("Employee saved successfully");
                 })
                 .orElse(ResponseEntity.badRequest().body("Business not found"));
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody EmployeeUpdateDto employeeUpdateDto){
