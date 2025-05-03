@@ -79,7 +79,7 @@ public class TimeSlotUtils {
     private static boolean isSlotTaken(TimeSlotDto slot, List<Appointment> appointments) {
         return appointments.stream().anyMatch(app -> {
             // Convertir Date a LocalTime
-            LocalTime appStartTime = LocalDateTime.ofInstant(app.getDate().toInstant(), ZoneId.systemDefault()).toLocalTime();
+            LocalTime appStartTime = app.getDate().toLocalTime();
             LocalTime appEndTime = appStartTime.plusMinutes(app.getService().getDuration());
 
             // Verificar si el slot se cruza con una cita

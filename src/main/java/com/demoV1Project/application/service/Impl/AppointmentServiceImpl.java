@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -112,7 +113,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     // METODO DE CREACION PARA LA GRILLA
     @Override
-    public AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDate date) {
+    public AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDateTime date) {
         // Obtener el servicio y su duración
         Service service = serviceService.findById(serviceId)
                 .orElseThrow(() -> new InvalidAppointmentGridException("Service not found with id: " + serviceId));

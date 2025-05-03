@@ -7,6 +7,7 @@ import com.demoV1Project.domain.dto.AppointmentGridDto.AppointmentGridDto;
 import com.demoV1Project.domain.model.Appointment;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,5 +19,5 @@ public interface AppointmentService {
     Appointment createAndSaveAppointment(AppointmentCreateDto appointmentCreateDto);
 
     // METODO DE CREACION PARA LA GRILLA
-    AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDate date);
+    AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDateTime date);
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v0/appointments")
@@ -22,7 +23,7 @@ public class AppointmentGridController {
     @GetMapping("/grid")
     public ResponseEntity<AppointmentGridDto> getAppointmentGrid(
             @RequestParam Long serviceId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date
     ) {
         AppointmentGridDto grid = appointmentGridService.getAppointmentGrid(serviceId, date);
         return ResponseEntity.ok(grid);

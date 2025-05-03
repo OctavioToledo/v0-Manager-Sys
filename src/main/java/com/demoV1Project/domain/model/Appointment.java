@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -22,8 +24,8 @@ public class Appointment {
     @Enumerated(EnumType.STRING) // Enum para estados del turno
     private AppointmentStatus status;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+
+    private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)

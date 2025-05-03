@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -14,7 +16,7 @@ import java.util.Date;
 public class AppointmentUpdateDto {
 
     private String status;
-    private Date date;
+    private LocalDateTime date;
     private Long employeeId;
     private Long serviceId;
 
