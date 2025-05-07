@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -21,8 +22,8 @@ public class Transaction {
 
     private BigDecimal amount;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+
+    private LocalDateTime date;
 
     private String description;
 

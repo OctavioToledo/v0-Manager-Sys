@@ -67,9 +67,6 @@ public class BusinessController {
         return ResponseEntity.ok(results);
     }
 
-
-
-
     @PostMapping("/save")
     public ResponseEntity<String> save(@RequestBody BusinessCreateDto businessCreateDto) throws URISyntaxException {
         Business business = businessMapper.toEntity(businessCreateDto);
