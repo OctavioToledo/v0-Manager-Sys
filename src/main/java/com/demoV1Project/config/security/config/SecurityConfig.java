@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .csrf((csrf)-> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v0/**").permitAll() // Endpoints públicos
+                        .requestMatchers("/api/v0/**").permitAll()// Endpoints públicos
                         .anyRequest().authenticated() // El resto requiere autenticación
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

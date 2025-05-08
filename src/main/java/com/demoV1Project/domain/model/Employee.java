@@ -42,7 +42,7 @@ public class Employee {
     @JsonIgnore
     private List<Appointment> appointments;
 
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<EmployeeWorkSchedule> workSchedules;
 

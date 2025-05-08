@@ -15,7 +15,6 @@ public class EmployeeCreateDto {
     private Long id;
     private String name;
     private String role;
-    private String workSchedule;
     private String profilePicture;
     private Long businessId;
     private List<Long> serviceIds;
