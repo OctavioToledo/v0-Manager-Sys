@@ -20,6 +20,7 @@ public class Employee {
     private Long id;
 
     private String name;
+    private String email;
     private String role;
 
     @Column(name = "profile_picture")

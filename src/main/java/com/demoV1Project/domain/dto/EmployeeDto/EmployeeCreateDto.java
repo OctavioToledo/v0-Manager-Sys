@@ -14,6 +14,7 @@ import java.util.List;
 public class EmployeeCreateDto {
     private Long id;
     private String name;
+    private String email;
     private String role;
     private String profilePicture;
     private Long businessId;

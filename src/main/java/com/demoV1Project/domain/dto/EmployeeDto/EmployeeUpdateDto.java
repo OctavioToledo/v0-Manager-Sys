@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 public class EmployeeUpdateDto {
     private String name;
+    private String email;
     private String role;
     private String profilePicture;
     private List<Long> serviceIds;

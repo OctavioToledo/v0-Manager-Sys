@@ -13,8 +13,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EmployeeDetailDto {
+
     private Long id;
     private String name;
+    private String email;
     private String role;
     private String profilePicture;
    // private List<ServiceShortDto> services;

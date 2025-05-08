@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 public class EmployeeShortDto {
     private Long id;
     private String name;
+    
 }
