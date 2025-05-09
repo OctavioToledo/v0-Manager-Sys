@@ -1,5 +1,6 @@
 package com.demoV1Project.domain.model;
 
+import com.demoV1Project.util.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,7 +25,7 @@ public class User {
 
     private String password;
     private String email;
-    private String role;
+    private Role role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore

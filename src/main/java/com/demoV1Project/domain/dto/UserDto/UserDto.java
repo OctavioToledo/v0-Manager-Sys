@@ -4,6 +4,7 @@ package com.demoV1Project.domain.dto.UserDto;
 import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.Business;
+import com.demoV1Project.util.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class UserDto {
         private String phoneNumber;
         private String password;
         private String email;
-        private String role;
+        private Role role;
         private List<BusinessShortDto> businessList = new ArrayList<>();
         private List<Long> appointmentId;
 
