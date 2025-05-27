@@ -40,19 +40,21 @@ public class ServiceController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody ServiceCreateDto serviceCreateDto) {
+    public ResponseEntity<?> save(@RequestBody ServiceCreateDto serviceCreateDto) {
         if (serviceCreateDto.getBusinessId() == null) {
             return ResponseEntity.badRequest().body("Business ID is required");
         }
+
         return businessService.findById(serviceCreateDto.getBusinessId())
                 .map(business -> {
                     Service service = serviceMapper.toEntity(serviceCreateDto);
                     service.setBusiness(business);
-                    serviceService.save(service);
-                    return ResponseEntity.status(HttpStatus.CREATED).body("Service saved successfully");
+                    Service savedService = serviceService.save(service);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(savedService.getId());
                 })
-                .orElse(ResponseEntity.badRequest().body("Business not found"));
+                .orElse((ResponseEntity.badRequest().build()));
     }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ServiceUpdateDto serviceUpdateDto){
         Service service = serviceService.findById(id)

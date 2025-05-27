@@ -8,8 +8,6 @@ import com.demoV1Project.domain.model.Address;
 import com.demoV1Project.application.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -34,11 +32,11 @@ public class AddressController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody AddressCreateDto addressCreateDto) throws URISyntaxException {
+    public ResponseEntity<Long> save(@RequestBody AddressCreateDto addressCreateDto) throws URISyntaxException {
         Address address = addressMapper.toEntity(addressCreateDto);
-        addressService.save(address);
+        Address savedAddress = addressService.save(address);
         return ResponseEntity.created(new URI("/api/v0/address/save"))
-                .body("Address created successfully");
+                .body(savedAddress.getId());
     }
 
     @PutMapping("/update/{id}")

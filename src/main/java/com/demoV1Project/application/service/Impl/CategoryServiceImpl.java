@@ -32,13 +32,19 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    public Category findByIdOrThrow(Long id) {
+        return categoryDao.findByIdOrThrow(id);
+    }
+
+    @Override
     public List<Category> findAll() {
         return categoryDao.findAll();
     }
 
     @Override
-    public void save(Category category) {
+    public Category save(Category category) {
         categoryDao.save(category);
+        return category;
     }
 
     @Override

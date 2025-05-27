@@ -41,15 +41,16 @@ public class AppointmentController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody AppointmentCreateDto appointmentCreateDto) throws URISyntaxException {
+    public ResponseEntity<?> save(@RequestBody AppointmentCreateDto appointmentCreateDto) throws URISyntaxException {
         try {
             Appointment appointment = appointmentService.createAndSaveAppointment(appointmentCreateDto);
             return ResponseEntity.created(new URI("/api/v0/appointment/save/"))
-                    .body("Appointment created successfully");
+                    .body(appointment.getId());
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody AppointmentUpdateDto appointmentUpdateDto) {

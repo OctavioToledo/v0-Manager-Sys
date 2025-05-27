@@ -13,6 +13,6 @@ public interface UserDao {
     void save(User user);
     void deleteById(Long id);
     boolean existsById(Long id);
-
+    User findByIdOrThrow(Long id);
 
 }

@@ -68,10 +68,11 @@ public class BusinessController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody BusinessCreateDto businessCreateDto) throws URISyntaxException {
+    public ResponseEntity<Long> save(@RequestBody BusinessCreateDto businessCreateDto) throws URISyntaxException {
         Business business = businessMapper.toEntity(businessCreateDto);
-        businessService.save(business);
-        return ResponseEntity.created(new URI("/api/v0/business/save/")).body("Business created successfully");
+        Business savedBusiness = businessService.save(business);
+        return ResponseEntity.created(new URI("/api/v0/business/save/"))
+                .body(savedBusiness.getId());
     }
 
     @PutMapping("/update/{id}")

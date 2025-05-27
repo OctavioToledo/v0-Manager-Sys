@@ -25,8 +25,9 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
-    public void save(Address address) {
+    public Address save(Address address) {
         addressDao.save(address);
+        return address;
     }
 
     @Override

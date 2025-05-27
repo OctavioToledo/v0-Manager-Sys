@@ -3,6 +3,7 @@ package com.demoV1Project.infrastructure.persistence.impl;
 import com.demoV1Project.domain.model.User;
 import com.demoV1Project.infrastructure.persistence.UserDao;
 import com.demoV1Project.domain.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,5 +44,11 @@ public class UserDaoImpl implements UserDao {
     @Override
     public boolean existsById(Long id) {
         return userRepository.existsById(id);
+    }
+
+    @Override
+    public User findByIdOrThrow(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 }

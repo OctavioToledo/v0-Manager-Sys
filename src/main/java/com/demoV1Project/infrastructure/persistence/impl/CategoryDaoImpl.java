@@ -3,6 +3,7 @@ package com.demoV1Project.infrastructure.persistence.impl;
 import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.infrastructure.persistence.CategoryDao;
 import com.demoV1Project.domain.repository.CategoryRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,11 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public Optional<Category> findByName(String name) {
         return categoryRepository.findByName(name);
+    }
+    @Override
+    public Category findByIdOrThrow(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found"));
     }
 
     @Override

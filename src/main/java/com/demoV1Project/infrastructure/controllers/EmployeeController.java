@@ -53,7 +53,7 @@ public class EmployeeController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody EmployeeCreateDto employeeCreateDto) {
+    public ResponseEntity<?> save(@RequestBody EmployeeCreateDto employeeCreateDto) {
         if (employeeCreateDto.getBusinessId() == null) {
             return ResponseEntity.badRequest().body("Business ID is required");
         }
@@ -63,16 +63,15 @@ public class EmployeeController {
                     Employee employee = employeeMapper.toEntity(employeeCreateDto);
                     employee.setBusiness(business);
 
-                    // 🔽 Agregamos esto:
                     if (employeeCreateDto.getServiceIds() != null && !employeeCreateDto.getServiceIds().isEmpty()) {
                         List<Service> services = serviceService.findAllById(employeeCreateDto.getServiceIds());
                         employee.setServices(services);
                     }
 
-                    employeeService.save(employee);
-                    return ResponseEntity.status(HttpStatus.CREATED).body("Employee saved successfully");
+                    Employee savedEmployee = employeeService.save(employee);
+                    return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee.getId());
                 })
-                .orElse(ResponseEntity.badRequest().body("Business not found"));
+                .orElse((ResponseEntity.badRequest().build()));
     }
 
 

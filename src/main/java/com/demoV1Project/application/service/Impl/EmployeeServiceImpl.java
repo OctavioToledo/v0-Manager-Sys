@@ -2,8 +2,6 @@ package com.demoV1Project.application.service.Impl;
 
 import com.demoV1Project.application.mapper.EmployeeMapper;
 import com.demoV1Project.domain.dto.EmployeeDto.EmployeeDetailDto;
-import com.demoV1Project.domain.dto.EmployeeDto.EmployeeDto;
-import com.demoV1Project.domain.dto.EmployeeDto.EmployeeShortDto;
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.infrastructure.persistence.EmployeeDao;
 import com.demoV1Project.application.service.EmployeeService;
@@ -39,8 +37,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public void save(Employee employee) {
+    public Employee save(Employee employee) {
         employeeDao.save(employee);
+        return employee;
     }
 
     @Override

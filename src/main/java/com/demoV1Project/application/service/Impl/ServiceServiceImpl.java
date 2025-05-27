@@ -50,8 +50,9 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
-    public void save(com.demoV1Project.domain.model.Service service) {
+    public Service save(Service service) {
         serviceDao.save(service);
+        return service;
     }
 
     @Override

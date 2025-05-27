@@ -35,13 +35,14 @@ public class CategoryController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
     @PostMapping("/save")
-    public ResponseEntity<Void> save(@RequestBody CategoryDto categoryDto) {
+    public ResponseEntity<Long> save(@RequestBody CategoryDto categoryDto) {
         Category category = categoryMapper.toEntity(categoryDto);
-        categoryService.save(category);
-        return ResponseEntity.created(URI.create("/api/v0/category/save")).build();
+        Category savedCategory = categoryService.save(category);
+        return ResponseEntity.created(URI.create("/api/v0/category/save"))
+                .body(savedCategory.getId());
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody CategoryUpdateDto categoryUpdateDto) {

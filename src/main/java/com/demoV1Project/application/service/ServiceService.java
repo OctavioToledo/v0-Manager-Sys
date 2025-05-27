@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface ServiceService {
     List<Service> findAll();
     Optional<Service> findById(Long id);
-    void save(Service service);
+    Service save(Service service);
     void deleteById(Long id);
     List<ServiceShortDto> findByBusinessId(Long businessId);
     List<Service> findAllById(List<Long> ids);

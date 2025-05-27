@@ -31,8 +31,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         userDao.save(user);
+        return user;
     }
 
     @Override
@@ -43,5 +44,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsById(Long id) {
         return false;
+    }
+
+    @Override
+    public User findByIdOrThrow(Long id) {
+        return userDao.findByIdOrThrow(id);
     }
 }

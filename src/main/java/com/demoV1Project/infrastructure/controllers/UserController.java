@@ -50,11 +50,13 @@ public class UserController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<String> save(@RequestBody UserCreateDto userCreateDto) throws URISyntaxException {
+    public ResponseEntity<Long> save(@RequestBody UserCreateDto userCreateDto) throws URISyntaxException {
         User user = userMapper.toEntity(userCreateDto);
-        userService.save(user);
-        return ResponseEntity.created(new URI("/api/v0/user/save")).body("User saved successfully");
+        User savedUser = userService.save(user);
+        return ResponseEntity.created(new URI("/api/v0/user/save"))
+                .body(savedUser.getId());
     }
+
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody UserUpdateDto userUpdateDto) {

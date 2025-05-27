@@ -1,7 +1,6 @@
 package com.demoV1Project.application.service.Impl;
 
 import com.demoV1Project.application.mapper.BusinessMapper;
-import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
 import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
 import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Category;
@@ -40,8 +39,9 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public void save(Business business) {
+    public Business save(Business business) {
         businessDao.save(business);
+        return business;
     }
 
     @Override
