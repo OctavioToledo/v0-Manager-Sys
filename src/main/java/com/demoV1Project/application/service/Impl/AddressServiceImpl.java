@@ -1,37 +1,31 @@
 package com.demoV1Project.application.service.Impl;
 
 import com.demoV1Project.domain.model.Address;
-import com.demoV1Project.infrastructure.persistence.AddressDao;
+import com.demoV1Project.domain.repository.AddressRepository;
 import com.demoV1Project.application.service.AddressService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AddressServiceImpl implements AddressService {
 
-    @Autowired
-    private final AddressDao addressDao;
-
-    public AddressServiceImpl(AddressDao addressDao) {
-        this.addressDao = addressDao;
-    }
-
+    private final AddressRepository addressRepository;
 
     @Override
     public Optional<Address> findById(Long id) {
-        return addressDao.findById(id);
+        return addressRepository.findById(id);
     }
 
     @Override
     public Address save(Address address) {
-        addressDao.save(address);
-        return address;
+        return addressRepository.save(address);
     }
 
     @Override
     public void deleteById(Long id) {
-        addressDao.deleteById(id);
+        addressRepository.deleteById(id);
     }
 }

@@ -2,6 +2,7 @@ package com.demoV1Project.domain.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.DayOfWeek;
 import java.time.LocalTime;
@@ -12,8 +13,8 @@ import java.time.LocalTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class EmployeeWorkSchedule {
+@SuperBuilder
+public class EmployeeWorkSchedule extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

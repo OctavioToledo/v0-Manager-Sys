@@ -1,40 +1,43 @@
 package com.demoV1Project.application.service.Impl;
 
 import com.demoV1Project.domain.model.Transaction;
-import com.demoV1Project.infrastructure.persistence.TransactionDao;
+import com.demoV1Project.domain.repository.TransactionRepository;
 import com.demoV1Project.application.service.TransactionService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+
 @Service
+@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
-    @Autowired
-    private final TransactionDao transactionDao;
 
-    public TransactionServiceImpl(TransactionDao transactionDao) {
-        this.transactionDao = transactionDao;
-    }
-
+    private final TransactionRepository transactionRepository;
 
     @Override
     public List<Transaction> findAll() {
-        return transactionDao.findAll();
+        return transactionRepository.findAll();
+    }
+
+    @Override
+    public org.springframework.data.domain.Page<Transaction> findAll(
+            org.springframework.data.domain.Pageable pageable) {
+        return transactionRepository.findAll(pageable);
     }
 
     @Override
     public Optional<Transaction> findById(Long id) {
-        return transactionDao.findById(id);
+        return transactionRepository.findById(id);
     }
 
     @Override
     public void save(Transaction transaction) {
-        transactionDao.save(transaction);
+        transactionRepository.save(transaction);
     }
 
     @Override
     public void deleteById(Long id) {
-        transactionDao.deleteById(id);
+        transactionRepository.deleteById(id);
     }
 }

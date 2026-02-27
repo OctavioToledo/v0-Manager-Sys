@@ -3,6 +3,7 @@ package com.demoV1Project.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.util.List;
 
@@ -11,9 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @Table(name = "employees")
-public class Employee {
+public class Employee extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,11 +33,7 @@ public class Employee {
     private Business business;
 
     @ManyToMany
-    @JoinTable(
-            name = "employee_service",
-            joinColumns = @JoinColumn(name = "employee_id"),
-            inverseJoinColumns = @JoinColumn(name = "service_id")
-    )
+    @JoinTable(name = "employee_service", joinColumns = @JoinColumn(name = "employee_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
     private List<Service> services;
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)

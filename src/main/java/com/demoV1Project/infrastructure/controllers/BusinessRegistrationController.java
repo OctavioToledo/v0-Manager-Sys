@@ -9,9 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v0/business-registration")
+@RequestMapping("/api/v1/business-registration")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:5173")
 public class BusinessRegistrationController {
 
     private final BusinessRegistrationService businessRegistrationService;

@@ -10,8 +10,10 @@ import java.util.Optional;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
-    @EntityGraph(attributePaths = {"business"}) // Carga EAGER de business para evitar LazyInitializationException
+    @EntityGraph(attributePaths = { "business" }) // Carga EAGER de business para evitar LazyInitializationException
     Optional<Employee> findWithBusinessById(Long employeeId);
 
     List<Employee> findByServicesId(Long serviceId);
+
+    List<Employee> findByBusinessId(Long businessId);
 }

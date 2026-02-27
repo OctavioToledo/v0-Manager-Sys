@@ -13,8 +13,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v0/category")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/v1/category")
 @RequiredArgsConstructor
 public class CategoryController {
 
@@ -22,10 +21,14 @@ public class CategoryController {
     private final CategoryMapper categoryMapper;
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<CategoryDto>> findAll() {
-        List<Category> categories = categoryService.findAll();
-        List<CategoryDto> categoryDtos = categoryMapper.toDtoList(categories);
-        return ResponseEntity.ok(categoryDtos);
+    public ResponseEntity<org.springframework.data.domain.Page<CategoryDto>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, org.springframework.data.domain.Sort.by("name").ascending());
+        org.springframework.data.domain.Page<CategoryDto> result = categoryService.findAll(pageable)
+                .map(categoryMapper::toDto);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/find/{id}")
@@ -35,14 +38,14 @@ public class CategoryController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
     @PostMapping("/save")
     public ResponseEntity<Long> save(@RequestBody CategoryDto categoryDto) {
         Category category = categoryMapper.toEntity(categoryDto);
         Category savedCategory = categoryService.save(category);
-        return ResponseEntity.created(URI.create("/api/v0/category/save"))
+        return ResponseEntity.created(URI.create("/api/v1/category/save"))
                 .body(savedCategory.getId());
     }
-
 
     @PutMapping("/update/{id}")
     public ResponseEntity<String> update(@PathVariable Long id, @RequestBody CategoryUpdateDto categoryUpdateDto) {

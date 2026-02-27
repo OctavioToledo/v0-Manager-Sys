@@ -4,26 +4,24 @@ import com.demoV1Project.util.enums.AppointmentStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "appointments")
-public class Appointment {
+public class Appointment extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING) // Enum para estados del turno
+    @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
-
 
     private LocalDateTime date;
 
@@ -48,4 +46,3 @@ public class Appointment {
     @JsonIgnore
     private User user;
 }
-

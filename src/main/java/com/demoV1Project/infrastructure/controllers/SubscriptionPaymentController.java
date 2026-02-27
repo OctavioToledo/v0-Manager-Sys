@@ -19,8 +19,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v0/subscription")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/v1/subscription")
 @RequiredArgsConstructor
 public class SubscriptionPaymentController {
 
@@ -29,9 +28,14 @@ public class SubscriptionPaymentController {
     private final SubscriptionPaymentMapper paymentMapper;
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<SubscriptionPaymentDto>> findAll() {
-        List<SubscriptionPayment> payments = paymentService.findAll();
-        return ResponseEntity.ok(paymentMapper.toDtoList(payments));
+    public ResponseEntity<org.springframework.data.domain.Page<SubscriptionPaymentDto>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
+        org.springframework.data.domain.Page<SubscriptionPaymentDto> result = paymentService.findAll(pageable)
+                .map(paymentMapper::toDto);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/find/{id}")
@@ -53,19 +57,20 @@ public class SubscriptionPaymentController {
                     SubscriptionPayment payment = paymentMapper.toEntity(paymentDto);
                     payment.setUser(user);
                     paymentService.save(payment);
-                    return ResponseEntity.created(URI.create("/api/v0/subscription/save")).body("Payment saved successfully");
+                    return ResponseEntity.created(URI.create("/api/v1/subscription/save"))
+                            .body("Payment saved successfully");
                 })
                 .orElse(ResponseEntity.badRequest().body("User not found"));
     }
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody SubscriptionPaymentUpdateDto updateDto){
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody SubscriptionPaymentUpdateDto updateDto) {
         SubscriptionPayment subscriptionPayment = paymentService.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("Service Not Found"));
+                .orElseThrow(() -> new IllegalArgumentException("Service Not Found"));
         paymentMapper.updateEntity(updateDto, subscriptionPayment);
         paymentService.save(subscriptionPayment);
         return ResponseEntity.ok("Service Updated Successfully");
     }
-
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {

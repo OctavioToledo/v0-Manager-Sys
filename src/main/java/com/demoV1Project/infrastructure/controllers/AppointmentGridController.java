@@ -12,8 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @RestController
-@RequestMapping("/api/v0/appointments")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/v1/appointments")
 @RequiredArgsConstructor
 public class AppointmentGridController {
 

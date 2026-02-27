@@ -14,8 +14,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 @RestController
-@RequestMapping("/api/v0/address")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/v1/address")
 @RequiredArgsConstructor
 public class AddressController {
 
@@ -35,7 +34,7 @@ public class AddressController {
     public ResponseEntity<Long> save(@RequestBody AddressCreateDto addressCreateDto) throws URISyntaxException {
         Address address = addressMapper.toEntity(addressCreateDto);
         Address savedAddress = addressService.save(address);
-        return ResponseEntity.created(new URI("/api/v0/address/save"))
+        return ResponseEntity.created(new URI("/api/v1/address/save"))
                 .body(savedAddress.getId());
     }
 

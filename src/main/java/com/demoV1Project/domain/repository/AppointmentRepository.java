@@ -13,9 +13,20 @@ import java.util.Optional;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-    List<Appointment> findByEmployeeIdAndDate(Long id, LocalDateTime date);
+        List<Appointment> findByEmployeeIdAndDate(Long id, LocalDateTime date);
 
-    // @Query("SELECT a FROM Appointment a JOIN FETCH a.business WHERE a.id = :id")
-    // Optional<Appointment> findByIdWithBusiness(@Param("id") Long id);
-
+        /**
+         * Busca citas que se solapan con el rango [start, end) para un empleado dado.
+         * Excluye citas canceladas.
+         */
+        @Query(value = "SELECT a.* FROM appointments a " +
+                        "JOIN services s ON a.service_id = s.id " +
+                        "WHERE a.employee_id = :employeeId " +
+                        "AND a.status <> 'CANCELLED' " +
+                        "AND a.date < :endTime " +
+                        "AND (a.date + (s.duration * interval '1 minute')) > :startTime", nativeQuery = true)
+        List<Appointment> findOverlappingAppointments(
+                        @Param("employeeId") Long employeeId,
+                        @Param("startTime") LocalDateTime startTime,
+                        @Param("endTime") LocalDateTime endTime);
 }

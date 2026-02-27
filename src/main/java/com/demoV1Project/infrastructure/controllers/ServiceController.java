@@ -8,34 +8,38 @@ import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceShortDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
 import com.demoV1Project.domain.model.Service;
+import com.demoV1Project.shared.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
-@RequestMapping("/api/v0/service")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/v1/service")
 @RequiredArgsConstructor
 public class ServiceController {
 
     private final ServiceService serviceService;
     private final BusinessService businessService;
     private final ServiceMapper serviceMapper;
+    private final TenantContext tenantContext;
 
     @GetMapping("/findAll/")
     public ResponseEntity<List<ServiceShortDto>> findByBusinessId(@RequestParam Long businessId) {
+        tenantContext.validateBusinessOwnership(businessId);
         List<ServiceShortDto> services = serviceService.findByBusinessId(businessId);
         return ResponseEntity.ok(services);
     }
 
-
     @GetMapping("/find/{id}")
     public ResponseEntity<ServiceDto> findById(@PathVariable Long id) {
         return serviceService.findById(id)
-                .map(serviceMapper::toDto)
-                .map(ResponseEntity::ok)
+                .map(service -> {
+                    tenantContext.validateBusinessOwnership(service.getBusiness().getId());
+                    return ResponseEntity.ok(serviceMapper.toDto(service));
+                })
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
@@ -44,6 +48,7 @@ public class ServiceController {
         if (serviceCreateDto.getBusinessId() == null) {
             return ResponseEntity.badRequest().body("Business ID is required");
         }
+        tenantContext.validateBusinessOwnership(serviceCreateDto.getBusinessId());
 
         return businessService.findById(serviceCreateDto.getBusinessId())
                 .map(business -> {
@@ -56,9 +61,10 @@ public class ServiceController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ServiceUpdateDto serviceUpdateDto){
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ServiceUpdateDto serviceUpdateDto) {
         Service service = serviceService.findById(id)
-                .orElseThrow(()-> new IllegalArgumentException("Service Not Found"));
+                .orElseThrow(() -> new IllegalArgumentException("Service Not Found"));
+        tenantContext.validateBusinessOwnership(service.getBusiness().getId());
         serviceMapper.updateEntity(serviceUpdateDto, service);
         serviceService.save(service);
         return ResponseEntity.ok("Service Updated Successfully");
@@ -66,10 +72,10 @@ public class ServiceController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
-        if (serviceService.findById(id).isPresent()) {
-            serviceService.deleteById(id);
-            return ResponseEntity.ok("Service deleted successfully");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Service not found");
+        Service service = serviceService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Service Not Found"));
+        tenantContext.validateBusinessOwnership(service.getBusiness().getId());
+        serviceService.deleteById(id);
+        return ResponseEntity.ok("Service deleted successfully");
     }
 }

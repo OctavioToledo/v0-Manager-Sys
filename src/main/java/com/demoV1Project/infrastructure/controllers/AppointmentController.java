@@ -8,6 +8,7 @@ import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentUpdateDto;
 
 import com.demoV1Project.domain.model.Appointment;
+import com.demoV1Project.shared.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,62 +16,62 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Optional;
+
 @RestController
-@RequestMapping("/api/v0/appointment")
-@CrossOrigin(origins = "http://localhost:5173")
+@RequestMapping("/api/v1/appointment")
 @RequiredArgsConstructor
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
     private final AppointmentMapper appointmentMapper;
+    private final TenantContext tenantContext;
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<AppointmentDto>> findAll() {
-        List<Appointment> appointments = appointmentService.findAll();
-        List<AppointmentDto> appointmentDtos = appointmentMapper.toDtoList(appointments);
-        return ResponseEntity.ok(appointmentDtos);
+    public ResponseEntity<org.springframework.data.domain.Page<AppointmentDto>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(
+                page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
+        org.springframework.data.domain.Page<AppointmentDto> result = appointmentService.findAll(pageable)
+                .map(appointmentMapper::toDto);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/find/{id}")
     public ResponseEntity<AppointmentDto> findById(@PathVariable Long id) {
         return appointmentService.findById(id)
-                .map(appointmentMapper::toDto)
-                .map(ResponseEntity::ok)
+                .map(appointment -> {
+                    tenantContext.validateBusinessOwnership(appointment.getBusiness().getId());
+                    return ResponseEntity.ok(appointmentMapper.toDto(appointment));
+                })
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody AppointmentCreateDto appointmentCreateDto) throws URISyntaxException {
-        try {
-            Appointment appointment = appointmentService.createAndSaveAppointment(appointmentCreateDto);
-            return ResponseEntity.created(new URI("/api/v0/appointment/save/"))
-                    .body(appointment.getId());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+        tenantContext.validateBusinessOwnership(appointmentCreateDto.getBusinessId());
+        Appointment appointment = appointmentService.createAndSaveAppointment(appointmentCreateDto);
+        return ResponseEntity.created(new URI("/api/v1/appointment/save/"))
+                .body(appointment.getId());
     }
 
-
     @PutMapping("/update/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody AppointmentUpdateDto appointmentUpdateDto) {
-        Optional<Appointment> appointmentOptional = appointmentService.findById(id);
-
-        if (appointmentOptional.isPresent()) {
-            Appointment appointment = appointmentOptional.get();
-            appointmentMapper.updateEntity(appointmentUpdateDto, appointment); // Usa el mapper para actualizar
-            appointmentService.save(appointment);
-            return ResponseEntity.ok("Appointment updated successfully");
-        }
-        return ResponseEntity.badRequest().body("Appointment not found");
+    public ResponseEntity<String> update(@PathVariable Long id,
+            @RequestBody AppointmentUpdateDto appointmentUpdateDto) {
+        Appointment appointment = appointmentService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        tenantContext.validateBusinessOwnership(appointment.getBusiness().getId());
+        appointmentMapper.updateEntity(appointmentUpdateDto, appointment);
+        appointmentService.save(appointment);
+        return ResponseEntity.ok("Appointment updated successfully");
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
-        if (appointmentService.findById(id).isPresent()) {
-            appointmentService.deleteById(id);
-            return ResponseEntity.ok("Appointment deleted successfully");
-        }
-        return ResponseEntity.badRequest().body("Invalid ID");
+        Appointment appointment = appointmentService.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        tenantContext.validateBusinessOwnership(appointment.getBusiness().getId());
+        appointmentService.deleteById(id);
+        return ResponseEntity.ok("Appointment deleted successfully");
     }
 }

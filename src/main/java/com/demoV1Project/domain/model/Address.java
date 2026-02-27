@@ -3,15 +3,16 @@ package com.demoV1Project.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@Builder
-@Table(name = "Addresses")
-public class Address {
+@SuperBuilder
+@Table(name = "addresses")
+public class Address extends Auditable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -22,10 +23,7 @@ public class Address {
     private String province;
     private String country;
 
-    @OneToOne(mappedBy = "address",  cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "address", cascade = CascadeType.ALL)
     @JsonIgnore
     private Business business;
-
-
 }
-

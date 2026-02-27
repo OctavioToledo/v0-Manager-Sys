@@ -40,18 +40,21 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf((csrf)-> csrf.disable())
+                .csrf((csrf) -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v0/**").permitAll()// Endpoints públicos
-                        .anyRequest().authenticated() // El resto requiere autenticación
-                )
+                        .requestMatchers("/api/v1/**").authenticated() // Todos los endpoints requieren autenticación
+                        .anyRequest().denyAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt( jwt -> jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter()) ) // Validación de tokens JWT
+                        .jwt(jwt -> jwt.decoder(jwtDecoder()).jwtAuthenticationConverter(jwtAuthenticationConverter())) // Validación
+                                                                                                                        // de
+                                                                                                                        // tokens
+                                                                                                                        // JWT
                 );
 
         return http.build();
     }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -78,6 +81,7 @@ public class SecurityConfig {
 
         return jwtDecoder;
     }
+
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter converter = new JwtGrantedAuthoritiesConverter();
