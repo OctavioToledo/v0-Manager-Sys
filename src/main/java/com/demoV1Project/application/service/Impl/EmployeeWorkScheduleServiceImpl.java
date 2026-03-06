@@ -78,14 +78,10 @@ public class EmployeeWorkScheduleServiceImpl implements EmployeeWorkScheduleServ
                                 .orElseThrow(() -> new InvalidEmployeeWorkScheduleException(
                                                 "El negocio no trabaja el día " + request.getDayOfWeek()));
 
-                LocalTime empMorningStart = LocalTime.parse(request.getOpeningMorningTime());
-                LocalTime empMorningEnd = LocalTime.parse(request.getClosingMorningTime());
-                LocalTime empEveningStart = request.getOpeningEveningTime() != null
-                                ? LocalTime.parse(request.getOpeningEveningTime())
-                                : null;
-                LocalTime empEveningEnd = request.getClosingEveningTime() != null
-                                ? LocalTime.parse(request.getClosingEveningTime())
-                                : null;
+                LocalTime empMorningStart = request.getOpeningMorningTime();
+                LocalTime empMorningEnd = request.getClosingMorningTime();
+                LocalTime empEveningStart = request.getOpeningEveningTime();
+                LocalTime empEveningEnd = request.getClosingEveningTime();
 
                 if (empMorningStart.isBefore(businessHourForDay.getOpeningMorningTime()) ||
                                 empMorningEnd.isAfter(businessHourForDay.getClosingMorningTime())) {

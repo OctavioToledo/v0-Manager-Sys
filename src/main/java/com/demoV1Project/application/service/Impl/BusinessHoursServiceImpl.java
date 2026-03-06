@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,24 +51,20 @@ public class BusinessHoursServiceImpl implements BusinessHoursService {
             throw new IllegalArgumentException("Los horarios matutinos son obligatorios");
         }
 
-        try {
-            LocalTime openingMorning = LocalTime.parse(dto.getOpeningMorningTime());
-            LocalTime closingMorning = LocalTime.parse(dto.getClosingMorningTime());
+        LocalTime openingMorning = dto.getOpeningMorningTime();
+        LocalTime closingMorning = dto.getClosingMorningTime();
 
-            if (openingMorning.isAfter(closingMorning)) {
-                throw new IllegalArgumentException("Horario matutino inválido");
+        if (openingMorning.isAfter(closingMorning)) {
+            throw new IllegalArgumentException("Horario matutino inválido");
+        }
+
+        if (dto.getOpeningEveningTime() != null && dto.getClosingEveningTime() != null) {
+            LocalTime openingEvening = dto.getOpeningEveningTime();
+            LocalTime closingEvening = dto.getClosingEveningTime();
+
+            if (openingEvening.isAfter(closingEvening)) {
+                throw new IllegalArgumentException("Horario vespertino inválido");
             }
-
-            if (dto.getOpeningEveningTime() != null && dto.getClosingEveningTime() != null) {
-                LocalTime openingEvening = LocalTime.parse(dto.getOpeningEveningTime());
-                LocalTime closingEvening = LocalTime.parse(dto.getClosingEveningTime());
-
-                if (openingEvening.isAfter(closingEvening)) {
-                    throw new IllegalArgumentException("Horario vespertino inválido");
-                }
-            }
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException("Formato de hora inválido. Use HH:mm");
         }
     }
 

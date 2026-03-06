@@ -21,5 +21,6 @@ public class UserCreateDto {
     private String password;
     private String email;
     private Role role;
+    @Builder.Default
     private List<Business> businessList = new ArrayList<>();
 }

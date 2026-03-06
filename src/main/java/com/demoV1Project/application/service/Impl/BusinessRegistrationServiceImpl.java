@@ -1,7 +1,6 @@
 package com.demoV1Project.application.service.Impl;
 
 import com.demoV1Project.application.mapper.AddressMapper;
-import com.demoV1Project.application.mapper.BusinessHoursMapper;
 import com.demoV1Project.application.mapper.BusinessMapper;
 import com.demoV1Project.application.service.*;
 import com.demoV1Project.domain.dto.BusinessDto.BusinessDto;
@@ -29,7 +28,6 @@ public class BusinessRegistrationServiceImpl implements BusinessRegistrationServ
     private final UserService userService;
 
     private final BusinessHoursService businessHoursService;
-    private final BusinessHoursMapper businessHoursMapper;
 
     @Override
     @Transactional

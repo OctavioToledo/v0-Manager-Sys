@@ -28,7 +28,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         private final AppointmentRepository appointmentRepository;
         private final EmployeeService employeeService;
         private final EmployeeRepository employeeRepository;
-        private final ServiceRepository serviceRepository;
         private final ServiceService serviceService;
         private final UserService userService;
         private final BusinessService businessService;

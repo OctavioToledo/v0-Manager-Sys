@@ -1,11 +1,9 @@
 package com.demoV1Project.application.service;
 
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
-import com.demoV1Project.domain.dto.AppointmentDto.AppointmentDto;
 import com.demoV1Project.domain.dto.AppointmentGridDto.AppointmentGridDto;
 import com.demoV1Project.domain.model.Appointment;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

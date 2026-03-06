@@ -13,7 +13,8 @@ import org.springframework.stereotype.Component;
 /**
  * Resuelve el tenant (usuario + negocio) a partir del JWT en el
  * SecurityContext.
- * Uso: inyectar en controllers o services para validar ownership.
+ * Soporta tanto JWTs de Auth0 (sub = "auth0|xxx") como locales (sub = userId
+ * numérico).
  */
 @Component
 @RequiredArgsConstructor
@@ -23,20 +24,28 @@ public class TenantContext {
 
     /**
      * Obtiene el User actual a partir del JWT sub claim.
-     * 
-     * @throws IllegalStateException si no hay JWT o el usuario no existe
+     * Si el sub es numérico (JWT local), busca por ID.
+     * Si el sub contiene "auth0|", busca por auth0Sub.
      */
     public User getCurrentUser() {
-        String auth0Sub = extractAuth0Sub();
-        return userRepository.findByAuth0Sub(auth0Sub)
-                .orElseThrow(() -> new IllegalStateException(
-                        "Usuario no encontrado para auth0Sub: " + auth0Sub));
+        String sub = extractSub();
+
+        // Local JWT: sub es el ID numérico del usuario
+        try {
+            Long userId = Long.parseLong(sub);
+            return userRepository.findById(userId)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Usuario no encontrado para id: " + userId));
+        } catch (NumberFormatException e) {
+            // Auth0 JWT: sub es "auth0|xxx" o "google-oauth2|xxx"
+            return userRepository.findByAuth0Sub(sub)
+                    .orElseThrow(() -> new IllegalStateException(
+                            "Usuario no encontrado para auth0Sub: " + sub));
+        }
     }
 
     /**
      * Valida que el usuario autenticado sea dueño del negocio indicado.
-     * 
-     * @throws BusinessAccessDeniedException si el user no es dueño
      */
     public void validateBusinessOwnership(Long businessId) {
         User user = getCurrentUser();
@@ -50,7 +59,6 @@ public class TenantContext {
 
     /**
      * Obtiene el Business del usuario actual validando ownership.
-     * Útil como shortcut cuando solo se necesita el business.
      */
     public Business getOwnedBusiness(Long businessId) {
         User user = getCurrentUser();
@@ -60,7 +68,7 @@ public class TenantContext {
                 .orElseThrow(() -> new BusinessAccessDeniedException(businessId));
     }
 
-    private String extractAuth0Sub() {
+    private String extractSub() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof Jwt jwt)) {
             throw new IllegalStateException("No se encontró un JWT válido en el contexto de seguridad");

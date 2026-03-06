@@ -3,11 +3,9 @@ package com.demoV1Project.infrastructure.controllers;
 import com.demoV1Project.application.mapper.SubscriptionPaymentMapper;
 import com.demoV1Project.application.service.SubscriptionPaymentService;
 import com.demoV1Project.application.service.UserService;
-import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
 import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentCreateDto;
 import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentDto;
 import com.demoV1Project.domain.dto.SubscriptionPaymentDto.SubscriptionPaymentUpdateDto;
-import com.demoV1Project.domain.model.Service;
 import com.demoV1Project.domain.model.SubscriptionPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/subscription")

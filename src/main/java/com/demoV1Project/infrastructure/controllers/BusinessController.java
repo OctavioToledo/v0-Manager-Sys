@@ -50,7 +50,6 @@ public class BusinessController {
     public ResponseEntity<BusinessShortDto> findShortById(@PathVariable Long id) {
         return businessService.findById(id)
                 .map(business -> {
-                    tenantContext.validateBusinessOwnership(business.getId());
                     return ResponseEntity.ok(businessMapper.toShortDto(business));
                 })
                 .orElse(ResponseEntity.notFound().build());
@@ -59,8 +58,8 @@ public class BusinessController {
     @GetMapping("/search")
     public ResponseEntity<List<BusinessShortDto>> searchBusinesses(
             @RequestParam(required = false) String name,
-            @RequestParam(required = true) String category,
-            @RequestParam(required = true) String city) {
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String city) {
 
         Category categoryObj = null;
         if (category != null && !category.isEmpty()) {
@@ -77,7 +76,20 @@ public class BusinessController {
         Business business = businessMapper.toEntity(businessCreateDto);
         // Asignar el usuario autenticado como dueño
         business.setUser(tenantContext.getCurrentUser());
+
+        // Ensure Address has a reference back to Business for bidirectional persistence
+        if (business.getAddress() != null) {
+            business.getAddress().setBusiness(business);
+        }
+
+        // Cargar categoria real para evitar errores de entidad desatada
+        if (business.getCategory() != null && business.getCategory().getId() != null) {
+            Category category = categoryService.findById(business.getCategory().getId()).orElse(null);
+            business.setCategory(category);
+        }
+
         Business savedBusiness = businessService.save(business);
+
         return ResponseEntity.created(new URI("/api/v1/business/save/"))
                 .body(savedBusiness.getId());
     }

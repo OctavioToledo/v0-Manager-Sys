@@ -1,6 +1,5 @@
 package com.demoV1Project.domain.dto.UserDto;
 
-
 import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.Business;
@@ -25,6 +24,7 @@ public class UserDto {
         private String password;
         private String email;
         private Role role;
+        @Builder.Default
         private List<BusinessShortDto> businessList = new ArrayList<>();
         private List<Long> appointmentId;
 

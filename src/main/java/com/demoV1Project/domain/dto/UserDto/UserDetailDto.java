@@ -22,5 +22,6 @@ public class UserDetailDto {
     private String password;
     private String email;
     private Role role;
+    @Builder.Default
     private List<BusinessShortDto> businessShortList = new ArrayList<>();
 }

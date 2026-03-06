@@ -20,6 +20,7 @@ public class BusinessMapper {
     public BusinessDto toDto(Business business) {
         return modelMapper.map(business, BusinessDto.class);
     }
+
     public BusinessDetailDto toDetailDto(Business business) {
         BusinessDetailDto dto = modelMapper.map(business, BusinessDetailDto.class);
         if (business.getUser() != null) {
@@ -27,7 +28,6 @@ public class BusinessMapper {
         }
         return dto;
     }
-
 
     public BusinessShortDto toShortDto(Business business) {
         return modelMapper.map(business, BusinessShortDto.class);
@@ -45,7 +45,7 @@ public class BusinessMapper {
                 .collect(Collectors.toList());
     }
 
-    public void updateEntity(BusinessUpdateDto businessUpdateDto, Business business){
+    public void updateEntity(BusinessUpdateDto businessUpdateDto, Business business) {
         modelMapper.map(businessUpdateDto, business);
     }
 

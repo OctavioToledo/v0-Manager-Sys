@@ -1,9 +1,8 @@
 package com.demoV1Project.domain.dto.BusinessHours;
 
-
 import lombok.*;
 import java.time.DayOfWeek;
-
+import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -12,8 +11,8 @@ import java.time.DayOfWeek;
 public class BusinessHoursDto {
 
         private DayOfWeek dayOfWeek;
-        private String openingMorningTime;  // Formato HH:mm
-        private String closingMorningTime;
-        private String openingEveningTime;  // Nullable
-        private String closingEveningTime;
+        private LocalTime openingMorningTime;
+        private LocalTime closingMorningTime;
+        private LocalTime openingEveningTime;
+        private LocalTime closingEveningTime;
 }

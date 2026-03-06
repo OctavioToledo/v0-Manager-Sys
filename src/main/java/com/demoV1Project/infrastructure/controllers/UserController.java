@@ -2,7 +2,6 @@ package com.demoV1Project.infrastructure.controllers;
 
 import com.demoV1Project.application.mapper.UserMapper;
 import com.demoV1Project.application.service.UserService;
-import com.demoV1Project.domain.dto.UserDto.UserCreateDto;
 import com.demoV1Project.domain.dto.UserDto.UserDetailDto;
 import com.demoV1Project.domain.dto.UserDto.UserDto;
 import com.demoV1Project.domain.dto.UserDto.UserUpdateDto;
@@ -12,10 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/user")

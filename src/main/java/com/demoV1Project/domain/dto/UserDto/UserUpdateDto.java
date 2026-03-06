@@ -19,5 +19,6 @@ public class UserUpdateDto {
     private String phoneNumber;
     private String password;
     private Role role;
+    @Builder.Default
     private List<Business> businessList = new ArrayList<>();
 }

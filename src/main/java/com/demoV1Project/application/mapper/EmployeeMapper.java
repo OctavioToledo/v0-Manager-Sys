@@ -1,8 +1,6 @@
 package com.demoV1Project.application.mapper;
 
-import com.demoV1Project.domain.dto.BusinessDto.BusinessUpdateDto;
 import com.demoV1Project.domain.dto.EmployeeDto.*;
-import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.Service;
 import org.modelmapper.ModelMapper;
@@ -30,10 +28,11 @@ public class EmployeeMapper {
         return employeeDto;
     }
 
-    public EmployeeDetailDto toDetailDto(Employee employee){
+    public EmployeeDetailDto toDetailDto(Employee employee) {
         return modelMapper.map(employee, EmployeeDetailDto.class);
     }
-    public List<EmployeeDetailDto> toDetailListDto(List<Employee> employees){
+
+    public List<EmployeeDetailDto> toDetailListDto(List<Employee> employees) {
         return employees.stream().map(this::toDetailDto).collect(Collectors.toList());
     }
 
@@ -47,7 +46,7 @@ public class EmployeeMapper {
                 .collect(Collectors.toList());
     }
 
-    public void updateEntity(EmployeeUpdateDto employeeUpdateDto, Employee employee){
+    public void updateEntity(EmployeeUpdateDto employeeUpdateDto, Employee employee) {
         modelMapper.map(employeeUpdateDto, employee);
     }
 }

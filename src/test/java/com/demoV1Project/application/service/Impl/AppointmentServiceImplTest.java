@@ -1,14 +1,11 @@
 package com.demoV1Project.application.service.Impl;
 
-import com.demoV1Project.application.exceptions.InvalidAppointmentGridException;
 import com.demoV1Project.application.service.*;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
 import com.demoV1Project.domain.dto.AppointmentGridDto.AppointmentGridDto;
 import com.demoV1Project.domain.dto.AppointmentGridDto.EmployeeScheduleGridDto;
-import com.demoV1Project.domain.dto.AppointmentGridDto.TimeSlotDto;
 import com.demoV1Project.domain.model.*;
 import com.demoV1Project.domain.repository.*;
-import com.demoV1Project.infrastructure.persistence.AppointmentDao;
 import com.demoV1Project.util.enums.AppointmentStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,7 +28,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AppointmentServiceImplTest {
 
-    @Mock private AppointmentDao appointmentDao;
     @Mock private AppointmentRepository appointmentRepository;
     @Mock private EmployeeService employeeService;
     @Mock private EmployeeRepository employeeRepository;
@@ -77,7 +73,7 @@ class AppointmentServiceImplTest {
         // Assert
         assertNotNull(result);
         assertEquals(AppointmentStatus.PENDING, result.getStatus());
-        verify(appointmentDao, times(1)).save(any(Appointment.class));
+        verify(appointmentRepository, times(1)).save(any(Appointment.class));
     }
 
     @Test

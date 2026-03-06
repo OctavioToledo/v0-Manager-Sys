@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
@@ -14,8 +15,8 @@ import java.time.DayOfWeek;
 public class EmployeeWorkScheduleDto {
     private Long id;
     private DayOfWeek dayOfWeek;
-    private String openingMorningTime;
-    private String closingMorningTime;
-    private String openingEveningTime;
-    private String closingEveningTime;
+    private LocalTime openingMorningTime;
+    private LocalTime closingMorningTime;
+    private LocalTime openingEveningTime;
+    private LocalTime closingEveningTime;
 }

@@ -41,7 +41,7 @@ public class Business extends Auditable {
         @JoinColumn(name = "category_id")
         private Category category;
 
-        @OneToOne()
+        @OneToOne(cascade = CascadeType.ALL)
         @JoinColumn(name = "address_id")
         private Address address;
 

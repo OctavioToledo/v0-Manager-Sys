@@ -1,7 +1,7 @@
 package com.demoV1Project.domain.dto.BusinessDto;
 
 import com.demoV1Project.domain.model.Address;
-import com.demoV1Project.domain.model.BusinessHours;
+import com.demoV1Project.domain.dto.BusinessHours.BusinessHoursDto;
 import com.demoV1Project.domain.model.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,7 @@ public class BusinessUpdateDto {
     private String description;
     private String phoneNumber;
     private String logo;
-    private List<BusinessHours> businessHours;
+    private List<BusinessHoursDto> businessHours;
     private String workDays;
     private Category category;
     private Address address;
