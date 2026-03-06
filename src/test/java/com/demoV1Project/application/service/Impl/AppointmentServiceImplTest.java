@@ -28,15 +28,24 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AppointmentServiceImplTest {
 
-    @Mock private AppointmentRepository appointmentRepository;
-    @Mock private EmployeeService employeeService;
-    @Mock private EmployeeRepository employeeRepository;
-    @Mock private ServiceRepository serviceRepository;
-    @Mock private ServiceService serviceService;
-    @Mock private UserService userService;
-    @Mock private BusinessService businessService;
-    @Mock private BusinessHoursRepository businessHoursRepository;
-    @Mock private EmployeeWorkScheduleRepository employeeWorkScheduleRepository;
+    @Mock
+    private AppointmentRepository appointmentRepository;
+    @Mock
+    private EmployeeService employeeService;
+    @Mock
+    private EmployeeRepository employeeRepository;
+    @Mock
+    private ServiceRepository serviceRepository;
+    @Mock
+    private ServiceService serviceService;
+    @Mock
+    private UserService userService;
+    @Mock
+    private BusinessService businessService;
+    @Mock
+    private BusinessHoursRepository businessHoursRepository;
+    @Mock
+    private EmployeeWorkScheduleRepository employeeWorkScheduleRepository;
 
     @InjectMocks
     private AppointmentServiceImpl appointmentService;
@@ -57,8 +66,10 @@ class AppointmentServiceImplTest {
         employee.setId(1L);
         Business business = new Business();
         business.setId(1L);
+        employee.setBusiness(business);
         com.demoV1Project.domain.model.Service service = new com.demoV1Project.domain.model.Service();
         service.setId(1L);
+        service.setBusiness(business);
         User user = new User();
         user.setId(1L);
 
