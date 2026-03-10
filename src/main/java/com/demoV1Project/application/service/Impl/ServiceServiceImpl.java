@@ -1,7 +1,7 @@
 package com.demoV1Project.application.service.Impl;
 
 import com.demoV1Project.application.mapper.ServiceMapper;
-import com.demoV1Project.domain.dto.ServiceDto.ServiceShortDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
 import com.demoV1Project.domain.model.Service;
 import com.demoV1Project.domain.repository.ServiceRepository;
 import com.demoV1Project.application.service.ServiceService;
@@ -18,9 +18,9 @@ public class ServiceServiceImpl implements ServiceService {
     private final ServiceMapper serviceMapper;
 
     @Override
-    public List<ServiceShortDto> findByBusinessId(Long businessId) {
+    public List<ServiceDto> findByBusinessId(Long businessId) {
         List<Service> services = serviceRepository.findByBusinessId(businessId);
-        return serviceMapper.toShortDtoList(services);
+        return serviceMapper.toDtoList(services);
     }
 
     @Override

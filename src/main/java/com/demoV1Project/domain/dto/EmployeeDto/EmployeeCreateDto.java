@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import com.demoV1Project.domain.model.EmployeeWorkSchedule;
 
 @Builder
 @Data
@@ -19,4 +20,5 @@ public class EmployeeCreateDto {
     private String profilePicture;
     private Long businessId;
     private List<Long> serviceIds;
+    private List<EmployeeWorkSchedule> workSchedules;
 }

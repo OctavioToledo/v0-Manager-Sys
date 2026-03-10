@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.HashSet;
 
 @RestController
 @RequestMapping("/api/v1/employee")
@@ -30,7 +31,7 @@ public class EmployeeController {
     private final ServiceService serviceService;
     private final TenantContext tenantContext;
 
-    @GetMapping("/findAll/")
+    @GetMapping("/findAll")
     public ResponseEntity<List<EmployeeDetailDto>> findByBusinessId(@RequestParam Long businessId) {
         tenantContext.validateBusinessOwnership(businessId);
         List<EmployeeDetailDto> employeeDtos = employeeService.findByBusinessId(businessId);
@@ -71,7 +72,11 @@ public class EmployeeController {
 
                     if (employeeCreateDto.getServiceIds() != null && !employeeCreateDto.getServiceIds().isEmpty()) {
                         List<Service> services = serviceService.findAllById(employeeCreateDto.getServiceIds());
-                        employee.setServices(services);
+                        employee.setServices(new HashSet<>(services));
+                    }
+
+                    if (employee.getWorkSchedules() != null) {
+                        employee.getWorkSchedules().forEach(schedule -> schedule.setEmployee(employee));
                     }
 
                     Employee savedEmployee = employeeService.save(employee);
@@ -85,7 +90,13 @@ public class EmployeeController {
         Employee employee = employeeService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Employee Not Found"));
         tenantContext.validateBusinessOwnership(employee.getBusiness().getId());
+
         employeeMapper.updateEntity(employeeUpdateDto, employee);
+
+        if (employee.getWorkSchedules() != null) {
+            employee.getWorkSchedules().forEach(schedule -> schedule.setEmployee(employee));
+        }
+
         employeeService.save(employee);
         return ResponseEntity.ok("Employee Updated Successfully");
     }

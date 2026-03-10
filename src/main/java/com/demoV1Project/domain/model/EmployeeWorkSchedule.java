@@ -19,16 +19,17 @@ public class EmployeeWorkSchedule extends Auditable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private DayOfWeek dayOfWeek;
+    private Integer dayOfWeek;
+    private Boolean isWorkingDay;
 
-    private LocalTime openingMorningTime;
-    private LocalTime closingMorningTime;
+    private LocalTime morningStart;
+    private LocalTime morningEnd;
 
-    private LocalTime openingEveningTime;
-    private LocalTime closingEveningTime;
+    private LocalTime afternoonStart;
+    private LocalTime afternoonEnd;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Employee employee;
 }

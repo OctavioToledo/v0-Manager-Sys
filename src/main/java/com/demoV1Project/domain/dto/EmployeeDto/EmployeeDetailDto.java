@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.demoV1Project.domain.model.EmployeeWorkSchedule;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
 import java.util.List;
 
 @Data
@@ -19,5 +21,6 @@ public class EmployeeDetailDto {
     private String email;
     private String role;
     private String profilePicture;
-   // private List<ServiceShortDto> services;
+    private List<ServiceDto> services;
+    private List<EmployeeWorkSchedule> workSchedules;
 }

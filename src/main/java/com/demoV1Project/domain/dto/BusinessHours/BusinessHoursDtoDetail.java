@@ -8,17 +8,17 @@ import lombok.NoArgsConstructor;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class BusinessHoursDtoDetail {
 
-    private DayOfWeek dayOfWeek;
-    private LocalTime openingMorningTime;
-    private LocalTime closingMorningTime;
-    private LocalTime openingEveningTime;
-    private LocalTime closingEveningTime;
+    private Integer dayOfWeek;
+    private Boolean isWorkingDay;
+    private LocalTime morningStart;
+    private LocalTime morningEnd;
+    private LocalTime afternoonStart;
+    private LocalTime afternoonEnd;
 
 }

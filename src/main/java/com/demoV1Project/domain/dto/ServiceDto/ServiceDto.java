@@ -17,7 +17,8 @@ public class ServiceDto {
     private Integer duration;
     private String description;
     private Double price;
+    private String category;
+    private Boolean isActive;
     private Long businessId;
     private List<Long> employeeIds;
 }
-

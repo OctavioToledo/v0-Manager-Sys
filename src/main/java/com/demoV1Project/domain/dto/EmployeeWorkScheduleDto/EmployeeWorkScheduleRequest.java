@@ -13,9 +13,10 @@ import java.time.LocalTime;
 @AllArgsConstructor
 @Builder
 public class EmployeeWorkScheduleRequest {
-    private DayOfWeek dayOfWeek;
-    private LocalTime openingMorningTime;
-    private LocalTime closingMorningTime;
-    private LocalTime openingEveningTime;
-    private LocalTime closingEveningTime;
+    private Integer dayOfWeek;
+    private Boolean isWorkingDay;
+    private LocalTime morningStart;
+    private LocalTime morningEnd;
+    private LocalTime afternoonStart;
+    private LocalTime afternoonEnd;
 }

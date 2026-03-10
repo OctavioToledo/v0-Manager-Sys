@@ -124,15 +124,17 @@ class AppointmentServiceImplTest {
         when(employeeRepository.findByServicesId(serviceId)).thenReturn(employees);
 
         BusinessHours businessHours = new BusinessHours();
-        businessHours.setOpeningMorningTime(LocalTime.of(9, 0));
-        businessHours.setClosingMorningTime(LocalTime.of(12, 0)); // 9-10, 10-11, 11-12
-        when(businessHoursRepository.findByBusinessIdAndDayOfWeek(eq(10L), any(DayOfWeek.class)))
+        businessHours.setIsWorkingDay(true);
+        businessHours.setMorningStart(LocalTime.of(9, 0));
+        businessHours.setMorningEnd(LocalTime.of(12, 0)); // 9-10, 10-11, 11-12
+        when(businessHoursRepository.findByBusinessIdAndDayOfWeek(eq(10L), anyInt()))
                 .thenReturn(Optional.of(businessHours));
 
         EmployeeWorkSchedule schedule = new EmployeeWorkSchedule();
-        schedule.setOpeningMorningTime(LocalTime.of(9, 0));
-        schedule.setClosingMorningTime(LocalTime.of(12, 0));
-        when(employeeWorkScheduleRepository.findByEmployeeIdAndDayOfWeek(eq(100L), any(DayOfWeek.class)))
+        schedule.setIsWorkingDay(true);
+        schedule.setMorningStart(LocalTime.of(9, 0));
+        schedule.setMorningEnd(LocalTime.of(12, 0));
+        when(employeeWorkScheduleRepository.findByEmployeeIdAndDayOfWeek(eq(100L), anyInt()))
                 .thenReturn(schedule);
 
         when(appointmentRepository.findByEmployeeIdAndDate(eq(100L), any(LocalDateTime.class)))

@@ -20,20 +20,20 @@ public class BusinessHours extends Auditable {
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
 
-        @Enumerated(EnumType.STRING)
-        private DayOfWeek dayOfWeek;
+        private Integer dayOfWeek;
+        private Boolean isWorkingDay;
 
-        @Column(name = "opening_morning_time")
-        private LocalTime openingMorningTime;
+        @Column(name = "morning_start")
+        private LocalTime morningStart;
 
-        @Column(name = "closing_morning_time")
-        private LocalTime closingMorningTime;
+        @Column(name = "morning_end")
+        private LocalTime morningEnd;
 
-        @Column(name = "opening_evening_time")
-        private LocalTime openingEveningTime;
+        @Column(name = "afternoon_start")
+        private LocalTime afternoonStart;
 
-        @Column(name = "closing_evening_time")
-        private LocalTime closingEveningTime;
+        @Column(name = "afternoon_end")
+        private LocalTime afternoonEnd;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "business_id")

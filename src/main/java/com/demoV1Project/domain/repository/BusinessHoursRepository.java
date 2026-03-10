@@ -11,7 +11,8 @@ import java.util.Optional;
 @Repository
 public interface BusinessHoursRepository extends JpaRepository<BusinessHours, Long> {
     List<BusinessHours> findByBusinessId(Long businessId);
-    Optional<BusinessHours> findByBusinessIdAndDayOfWeek(Long businessId, DayOfWeek dayOfWeek);
+
+    Optional<BusinessHours> findByBusinessIdAndDayOfWeek(Long businessId, Integer dayOfWeek);
 
     void deleteByBusinessId(Long businessId);
 }

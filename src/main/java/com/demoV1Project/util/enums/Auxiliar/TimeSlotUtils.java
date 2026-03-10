@@ -16,16 +16,20 @@ public class TimeSlotUtils {
     public static List<TimeSlotDto> generateTimeSlots(BusinessHours hours, int durationInMinutes) {
         List<TimeSlotDto> slots = new ArrayList<>();
 
-        if (hours.getOpeningMorningTime() != null && hours.getClosingMorningTime() != null) {
-            slots.addAll(generateRange(hours.getOpeningMorningTime(), hours.getClosingMorningTime(), durationInMinutes));
+        if (!hours.getIsWorkingDay())
+            return slots;
+
+        if (hours.getMorningStart() != null && hours.getMorningEnd() != null) {
+            slots.addAll(generateRange(hours.getMorningStart(), hours.getMorningEnd(), durationInMinutes));
         }
 
-        if (hours.getOpeningEveningTime() != null && hours.getClosingEveningTime() != null) {
-            slots.addAll(generateRange(hours.getOpeningEveningTime(), hours.getClosingEveningTime(), durationInMinutes));
+        if (hours.getAfternoonStart() != null && hours.getAfternoonEnd() != null) {
+            slots.addAll(generateRange(hours.getAfternoonStart(), hours.getAfternoonEnd(), durationInMinutes));
         }
 
         return slots;
     }
+
     public static List<TimeSlotDto> generateRange(LocalTime start, LocalTime end, int durationInMinutes) {
         List<TimeSlotDto> slots = new ArrayList<>();
         LocalTime current = start;
@@ -37,21 +41,18 @@ public class TimeSlotUtils {
                             .endTime(current.plusMinutes(durationInMinutes))
                             .available(true) // el valor real de disponibilidad se ajusta más adelante
                             .appointmentId(null)
-                            .build()
-            );
+                            .build());
             current = current.plusMinutes(durationInMinutes);
         }
 
         return slots;
     }
 
-
     public static List<Boolean> calculateAvailability(
             List<TimeSlotDto> slots,
             EmployeeWorkSchedule schedule,
             List<Appointment> takenAppointments,
-            int serviceDuration
-    ) {
+            int serviceDuration) {
         List<Boolean> result = new ArrayList<>();
 
         for (TimeSlotDto slot : slots) {
@@ -64,16 +65,17 @@ public class TimeSlotUtils {
     }
 
     private static boolean isSlotWithinSchedule(TimeSlotDto slot, EmployeeWorkSchedule schedule) {
+        if (!schedule.getIsWorkingDay())
+            return false;
+
         // Verificar ambos bloques, mañana y tarde
-        return (
-                (schedule.getOpeningMorningTime() != null && schedule.getClosingMorningTime() != null &&
-                        !slot.getStartTime().isBefore(schedule.getOpeningMorningTime()) &&
-                        !slot.getEndTime().isAfter(schedule.getClosingMorningTime()))
-                        ||
-                        (schedule.getOpeningEveningTime() != null && schedule.getClosingEveningTime() != null &&
-                                !slot.getStartTime().isBefore(schedule.getOpeningEveningTime()) &&
-                                !slot.getEndTime().isAfter(schedule.getClosingEveningTime()))
-        );
+        return ((schedule.getMorningStart() != null && schedule.getMorningEnd() != null &&
+                !slot.getStartTime().isBefore(schedule.getMorningStart()) &&
+                !slot.getEndTime().isAfter(schedule.getMorningEnd()))
+                ||
+                (schedule.getAfternoonStart() != null && schedule.getAfternoonEnd() != null &&
+                        !slot.getStartTime().isBefore(schedule.getAfternoonStart()) &&
+                        !slot.getEndTime().isAfter(schedule.getAfternoonEnd())));
     }
 
     private static boolean isSlotTaken(TimeSlotDto slot, List<Appointment> appointments) {
@@ -87,4 +89,3 @@ public class TimeSlotUtils {
         });
     }
 }
-

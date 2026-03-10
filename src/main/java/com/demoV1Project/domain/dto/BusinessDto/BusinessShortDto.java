@@ -1,6 +1,7 @@
 package com.demoV1Project.domain.dto.BusinessDto;
 
 import com.demoV1Project.domain.model.Address;
+import com.demoV1Project.domain.dto.CategoryDto.CategoryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,4 +18,5 @@ public class BusinessShortDto {
     private String phoneNumber;
     private String logo;
     private Address address;
+    private CategoryDto category;
 }

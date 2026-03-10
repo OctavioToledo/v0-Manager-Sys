@@ -47,20 +47,20 @@ public class BusinessHoursServiceImpl implements BusinessHoursService {
     }
 
     private void validateBusinessHours(BusinessHoursDto dto) {
-        if (dto.getOpeningMorningTime() == null || dto.getClosingMorningTime() == null) {
+        if (dto.getMorningStart() == null || dto.getMorningEnd() == null) {
             throw new IllegalArgumentException("Los horarios matutinos son obligatorios");
         }
 
-        LocalTime openingMorning = dto.getOpeningMorningTime();
-        LocalTime closingMorning = dto.getClosingMorningTime();
+        LocalTime openingMorning = dto.getMorningStart();
+        LocalTime closingMorning = dto.getMorningEnd();
 
         if (openingMorning.isAfter(closingMorning)) {
             throw new IllegalArgumentException("Horario matutino inválido");
         }
 
-        if (dto.getOpeningEveningTime() != null && dto.getClosingEveningTime() != null) {
-            LocalTime openingEvening = dto.getOpeningEveningTime();
-            LocalTime closingEvening = dto.getClosingEveningTime();
+        if (dto.getAfternoonStart() != null && dto.getAfternoonEnd() != null) {
+            LocalTime openingEvening = dto.getAfternoonStart();
+            LocalTime closingEvening = dto.getAfternoonEnd();
 
             if (openingEvening.isAfter(closingEvening)) {
                 throw new IllegalArgumentException("Horario vespertino inválido");

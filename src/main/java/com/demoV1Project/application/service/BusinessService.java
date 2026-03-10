@@ -22,6 +22,6 @@ public interface BusinessService {
 
     void deleteById(Long id);
 
-    List<BusinessShortDto> searchBusinesses(String name, Category category, String city);
+    List<BusinessShortDto> searchBusinesses(String name, String categoryName, String city);
 
 }

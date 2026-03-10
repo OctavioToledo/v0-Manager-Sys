@@ -8,12 +8,14 @@ import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.shared.security.TenantContext;
 import lombok.RequiredArgsConstructor;
+import com.demoV1Project.config.security.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/business")
@@ -24,6 +26,7 @@ public class BusinessController {
     private final BusinessMapper businessMapper;
     private final CategoryService categoryService;
     private final TenantContext tenantContext;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/findAll")
     public ResponseEntity<org.springframework.data.domain.Page<BusinessDto>> findAll(
@@ -61,18 +64,14 @@ public class BusinessController {
             @RequestParam(required = false) String category,
             @RequestParam(required = false) String city) {
 
-        Category categoryObj = null;
-        if (category != null && !category.isEmpty()) {
-            categoryObj = categoryService.findByName(category).orElse(null);
-        }
-
-        List<BusinessShortDto> results = businessService.searchBusinesses(name, categoryObj, city);
+        List<BusinessShortDto> results = businessService.searchBusinesses(name, category, city);
 
         return ResponseEntity.ok(results);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Long> save(@RequestBody BusinessCreateDto businessCreateDto) throws URISyntaxException {
+    public ResponseEntity<Map<String, Object>> save(@RequestBody BusinessCreateDto businessCreateDto)
+            throws URISyntaxException {
         Business business = businessMapper.toEntity(businessCreateDto);
         // Asignar el usuario autenticado como dueño
         business.setUser(tenantContext.getCurrentUser());
@@ -90,8 +89,16 @@ public class BusinessController {
 
         Business savedBusiness = businessService.save(business);
 
+        String newToken = jwtTokenProvider.generateToken(
+                tenantContext.getCurrentUser().getId(),
+                tenantContext.getCurrentUser().getEmail(),
+                tenantContext.getCurrentUser().getRole().name(),
+                savedBusiness.getId());
+
         return ResponseEntity.created(new URI("/api/v1/business/save/"))
-                .body(savedBusiness.getId());
+                .body(Map.of(
+                        "business", savedBusiness.getId(),
+                        "token", newToken));
     }
 
     @PutMapping("/update/{id}")

@@ -48,8 +48,11 @@ public class BusinessServiceImpl implements BusinessService {
     }
 
     @Override
-    public List<BusinessShortDto> searchBusinesses(String name, Category category, String city) {
-        List<Business> businesses = businessRepository.searchBusinesses(name, category, city);
+    public List<BusinessShortDto> searchBusinesses(String name, String categoryName, String city) {
+        List<Business> businesses = businessRepository.searchBusinesses(
+                name == null ? "" : name,
+                categoryName == null ? "" : categoryName,
+                city == null ? "" : city);
         return businesses.stream()
                 .map(businessMapper::toShortDto)
                 .collect(Collectors.toList());

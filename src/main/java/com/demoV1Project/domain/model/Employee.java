@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @NoArgsConstructor
@@ -34,7 +36,8 @@ public class Employee extends Auditable {
 
     @ManyToMany
     @JoinTable(name = "employee_service", joinColumns = @JoinColumn(name = "employee_id"), inverseJoinColumns = @JoinColumn(name = "service_id"))
-    private List<Service> services;
+    @Builder.Default
+    private Set<Service> services = new HashSet<>();
 
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     @JsonIgnore

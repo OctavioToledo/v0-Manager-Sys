@@ -6,6 +6,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
 @Entity
 @NoArgsConstructor
@@ -28,6 +30,11 @@ public class Service extends Auditable {
 
     private Double price;
 
+    private String category;
+
+    @Builder.Default
+    private Boolean isActive = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_id")
     @JsonIgnore
@@ -35,7 +42,8 @@ public class Service extends Auditable {
 
     @ManyToMany(mappedBy = "services")
     @JsonIgnore
-    private List<Employee> employees;
+    @Builder.Default
+    private Set<Employee> employees = new HashSet<>();
 
     @OneToMany(mappedBy = "service", cascade = CascadeType.ALL)
     @JsonIgnore

@@ -17,11 +17,12 @@ public class EmployeeWorkScheduleMapper {
 
         EmployeeWorkSchedule entity = new EmployeeWorkSchedule();
         entity.setDayOfWeek(dto.getDayOfWeek());
+        entity.setIsWorkingDay(dto.getIsWorkingDay());
 
-        entity.setOpeningMorningTime(dto.getOpeningMorningTime());
-        entity.setClosingMorningTime(dto.getClosingMorningTime());
-        entity.setOpeningEveningTime(dto.getOpeningEveningTime());
-        entity.setClosingEveningTime(dto.getClosingEveningTime());
+        entity.setMorningStart(dto.getMorningStart());
+        entity.setMorningEnd(dto.getMorningEnd());
+        entity.setAfternoonStart(dto.getAfternoonStart());
+        entity.setAfternoonEnd(dto.getAfternoonEnd());
 
         return entity;
     }
@@ -33,10 +34,11 @@ public class EmployeeWorkScheduleMapper {
         return EmployeeWorkScheduleDto.builder()
                 .id(entity.getId())
                 .dayOfWeek(entity.getDayOfWeek())
-                .openingMorningTime(entity.getOpeningMorningTime())
-                .closingMorningTime(entity.getClosingMorningTime())
-                .openingEveningTime(entity.getOpeningEveningTime())
-                .closingEveningTime(entity.getClosingEveningTime())
+                .isWorkingDay(entity.getIsWorkingDay())
+                .morningStart(entity.getMorningStart())
+                .morningEnd(entity.getMorningEnd())
+                .afternoonStart(entity.getAfternoonStart())
+                .afternoonEnd(entity.getAfternoonEnd())
                 .build();
     }
 

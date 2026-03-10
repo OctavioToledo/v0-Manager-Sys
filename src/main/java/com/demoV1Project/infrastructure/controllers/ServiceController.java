@@ -7,7 +7,9 @@ import com.demoV1Project.domain.dto.ServiceDto.ServiceCreateDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceShortDto;
 import com.demoV1Project.domain.dto.ServiceDto.ServiceUpdateDto;
+import com.demoV1Project.domain.model.Employee;
 import com.demoV1Project.domain.model.Service;
+import com.demoV1Project.application.service.EmployeeService;
 import com.demoV1Project.shared.security.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/v1/service")
@@ -25,11 +28,12 @@ public class ServiceController {
     private final BusinessService businessService;
     private final ServiceMapper serviceMapper;
     private final TenantContext tenantContext;
+    private final EmployeeService employeeService;
 
-    @GetMapping("/findAll/")
-    public ResponseEntity<List<ServiceShortDto>> findByBusinessId(@RequestParam Long businessId) {
+    @GetMapping("/findAll")
+    public ResponseEntity<List<ServiceDto>> findByBusinessId(@RequestParam Long businessId) {
         tenantContext.validateBusinessOwnership(businessId);
-        List<ServiceShortDto> services = serviceService.findByBusinessId(businessId);
+        List<ServiceDto> services = serviceService.findByBusinessId(businessId);
         return ResponseEntity.ok(services);
     }
 
@@ -55,6 +59,19 @@ public class ServiceController {
                     Service service = serviceMapper.toEntity(serviceCreateDto);
                     service.setBusiness(business);
                     Service savedService = serviceService.save(service);
+
+                    if (serviceCreateDto.getEmployeeIds() != null && !serviceCreateDto.getEmployeeIds().isEmpty()) {
+                        List<Employee> employees = employeeService.findAll().stream()
+                                .filter(e -> serviceCreateDto.getEmployeeIds().contains(e.getId()))
+                                .toList();
+                        for (Employee emp : employees) {
+                            if (!emp.getServices().contains(savedService)) {
+                                emp.getServices().add(savedService);
+                                employeeService.save(emp);
+                            }
+                        }
+                    }
+
                     return ResponseEntity.status(HttpStatus.CREATED).body(savedService.getId());
                 })
                 .orElse((ResponseEntity.badRequest().build()));
@@ -66,7 +83,28 @@ public class ServiceController {
                 .orElseThrow(() -> new IllegalArgumentException("Service Not Found"));
         tenantContext.validateBusinessOwnership(service.getBusiness().getId());
         serviceMapper.updateEntity(serviceUpdateDto, service);
-        serviceService.save(service);
+        Service savedService = serviceService.save(service);
+
+        if (serviceUpdateDto.getEmployeeIds() != null) {
+            List<Employee> currentEmployees = new ArrayList<>(service.getEmployees());
+            for (Employee emp : currentEmployees) {
+                if (!serviceUpdateDto.getEmployeeIds().contains(emp.getId())) {
+                    emp.getServices().remove(service);
+                    employeeService.save(emp);
+                }
+            }
+            List<Employee> allEmployees = employeeService.findAll();
+            List<Employee> newEmployees = allEmployees.stream()
+                    .filter(e -> serviceUpdateDto.getEmployeeIds().contains(e.getId()))
+                    .toList();
+            for (Employee emp : newEmployees) {
+                if (!emp.getServices().contains(service)) {
+                    emp.getServices().add(service);
+                    employeeService.save(emp);
+                }
+            }
+        }
+
         return ResponseEntity.ok("Service Updated Successfully");
     }
 
@@ -75,6 +113,13 @@ public class ServiceController {
         Service service = serviceService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Service Not Found"));
         tenantContext.validateBusinessOwnership(service.getBusiness().getId());
+
+        List<Employee> currentEmployees = new ArrayList<>(service.getEmployees());
+        for (Employee emp : currentEmployees) {
+            emp.getServices().remove(service);
+            employeeService.save(emp);
+        }
+
         serviceService.deleteById(id);
         return ResponseEntity.ok("Service deleted successfully");
     }

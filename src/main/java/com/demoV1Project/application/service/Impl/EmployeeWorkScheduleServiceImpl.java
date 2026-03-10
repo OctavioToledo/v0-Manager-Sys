@@ -78,32 +78,36 @@ public class EmployeeWorkScheduleServiceImpl implements EmployeeWorkScheduleServ
                                 .orElseThrow(() -> new InvalidEmployeeWorkScheduleException(
                                                 "El negocio no trabaja el día " + request.getDayOfWeek()));
 
-                LocalTime empMorningStart = request.getOpeningMorningTime();
-                LocalTime empMorningEnd = request.getClosingMorningTime();
-                LocalTime empEveningStart = request.getOpeningEveningTime();
-                LocalTime empEveningEnd = request.getClosingEveningTime();
+                LocalTime empMorningStart = request.getMorningStart();
+                LocalTime empMorningEnd = request.getMorningEnd();
+                LocalTime empEveningStart = request.getAfternoonStart();
+                LocalTime empEveningEnd = request.getAfternoonEnd();
 
-                if (empMorningStart.isBefore(businessHourForDay.getOpeningMorningTime()) ||
-                                empMorningEnd.isAfter(businessHourForDay.getClosingMorningTime())) {
-                        throw new InvalidEmployeeWorkScheduleException(
-                                        "Horario matutino del empleado debe estar entre " +
-                                                        businessHourForDay.getOpeningMorningTime() + " y " +
-                                                        businessHourForDay.getClosingMorningTime());
+                if (empMorningStart != null && empMorningEnd != null) {
+                        if (businessHourForDay.getMorningStart() == null || businessHourForDay.getMorningEnd() == null
+                                        ||
+                                        empMorningStart.isBefore(businessHourForDay.getMorningStart()) ||
+                                        empMorningEnd.isAfter(businessHourForDay.getMorningEnd())) {
+                                throw new InvalidEmployeeWorkScheduleException(
+                                                "Horario matutino del empleado debe estar entre " +
+                                                                businessHourForDay.getMorningStart() + " y " +
+                                                                businessHourForDay.getMorningEnd());
+                        }
                 }
 
                 if (empEveningStart != null && empEveningEnd != null) {
-                        if (businessHourForDay.getOpeningEveningTime() == null ||
-                                        businessHourForDay.getClosingEveningTime() == null) {
+                        if (businessHourForDay.getAfternoonStart() == null ||
+                                        businessHourForDay.getAfternoonEnd() == null) {
                                 throw new InvalidEmployeeWorkScheduleException(
                                                 "El negocio no tiene horario vespertino configurado para "
                                                                 + request.getDayOfWeek());
                         }
-                        if (empEveningStart.isBefore(businessHourForDay.getOpeningEveningTime()) ||
-                                        empEveningEnd.isAfter(businessHourForDay.getClosingEveningTime())) {
+                        if (empEveningStart.isBefore(businessHourForDay.getAfternoonStart()) ||
+                                        empEveningEnd.isAfter(businessHourForDay.getAfternoonEnd())) {
                                 throw new InvalidEmployeeWorkScheduleException(
                                                 "Horario vespertino del empleado debe estar entre " +
-                                                                businessHourForDay.getOpeningEveningTime() + " y " +
-                                                                businessHourForDay.getClosingEveningTime());
+                                                                businessHourForDay.getAfternoonStart() + " y " +
+                                                                businessHourForDay.getAfternoonEnd());
                         }
                 }
         }

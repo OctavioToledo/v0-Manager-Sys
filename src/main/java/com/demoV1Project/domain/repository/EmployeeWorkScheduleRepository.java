@@ -6,10 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import java.time.DayOfWeek;
 import java.util.List;
+
 @Repository
 public interface EmployeeWorkScheduleRepository extends JpaRepository<EmployeeWorkSchedule, Long> {
     List<EmployeeWorkSchedule> findByEmployeeId(Long employeeId);
+
     void deleteByEmployeeId(Long employeeId);
 
-    EmployeeWorkSchedule findByEmployeeIdAndDayOfWeek(Long id, DayOfWeek dayOfWeek);
+    EmployeeWorkSchedule findByEmployeeIdAndDayOfWeek(Long id, Integer dayOfWeek);
 }

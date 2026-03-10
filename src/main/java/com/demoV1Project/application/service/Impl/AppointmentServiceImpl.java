@@ -100,11 +100,12 @@ public class AppointmentServiceImpl implements AppointmentService {
                 }
 
                 // === VALIDACIÓN 4: Dentro del horario del negocio ===
-                DayOfWeek dayOfWeek = appointmentStart.getDayOfWeek();
+                int dayOfWeek = appointmentStart.getDayOfWeek().getValue() == 7 ? 0
+                                : appointmentStart.getDayOfWeek().getValue();
                 Optional<BusinessHours> businessHoursOpt = businessHoursRepository
                                 .findByBusinessIdAndDayOfWeek(business.getId(), dayOfWeek);
 
-                if (businessHoursOpt.isEmpty()) {
+                if (businessHoursOpt.isEmpty() || !businessHoursOpt.get().getIsWorkingDay()) {
                         throw new IllegalArgumentException(
                                         "El negocio no opera el día seleccionado");
                 }
@@ -113,15 +114,15 @@ public class AppointmentServiceImpl implements AppointmentService {
                 java.time.LocalTime startTime = appointmentStart.toLocalTime();
                 java.time.LocalTime endTime = appointmentEnd.toLocalTime();
 
-                boolean inMorning = bh.getOpeningMorningTime() != null
-                                && bh.getClosingMorningTime() != null
-                                && !startTime.isBefore(bh.getOpeningMorningTime())
-                                && !endTime.isAfter(bh.getClosingMorningTime());
+                boolean inMorning = bh.getMorningStart() != null
+                                && bh.getMorningEnd() != null
+                                && !startTime.isBefore(bh.getMorningStart())
+                                && !endTime.isAfter(bh.getMorningEnd());
 
-                boolean inEvening = bh.getOpeningEveningTime() != null
-                                && bh.getClosingEveningTime() != null
-                                && !startTime.isBefore(bh.getOpeningEveningTime())
-                                && !endTime.isAfter(bh.getClosingEveningTime());
+                boolean inEvening = bh.getAfternoonStart() != null
+                                && bh.getAfternoonEnd() != null
+                                && !startTime.isBefore(bh.getAfternoonStart())
+                                && !endTime.isAfter(bh.getAfternoonEnd());
 
                 if (!inMorning && !inEvening) {
                         throw new IllegalArgumentException(
@@ -152,11 +153,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
                 List<Employee> employees = employeeRepository.findByServicesId(serviceId);
 
-                DayOfWeek dayOfWeek = date.getDayOfWeek();
+                int dayOfWeek = date.getDayOfWeek().getValue() == 7 ? 0 : date.getDayOfWeek().getValue();
                 BusinessHours businessHours = businessHoursRepository
                                 .findByBusinessIdAndDayOfWeek(service.getBusiness().getId(), dayOfWeek)
                                 .orElseThrow(() -> new InvalidAppointmentGridException(
                                                 "No se encontraron horarios disponibles"));
+
+                if (!businessHours.getIsWorkingDay()) {
+                        throw new InvalidAppointmentGridException("El negocio no opera el día seleccionado");
+                }
 
                 List<TimeSlotDto> timeSlots = TimeSlotUtils.generateTimeSlots(businessHours, duration);
 
