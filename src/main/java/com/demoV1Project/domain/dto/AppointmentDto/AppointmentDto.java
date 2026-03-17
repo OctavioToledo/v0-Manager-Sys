@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -16,10 +14,11 @@ import java.util.Date;
 public class AppointmentDto {
     private Long id;
     private String status;
-    private LocalDateTime date;
+    private LocalDate appointmentDate;
+    private String startTime;
+    private String endTime;
     private Long businessId;
     private Long employeeId;
     private Long serviceId;
     private Long userId;
 }
-

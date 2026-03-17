@@ -4,7 +4,6 @@ import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
 import com.demoV1Project.domain.dto.AppointmentGridDto.AppointmentGridDto;
 import com.demoV1Project.domain.model.Appointment;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +21,12 @@ public interface AppointmentService {
 
     void deleteById(Long id);
 
-    Appointment createAndSaveAppointment(AppointmentCreateDto appointmentCreateDto);
+    Appointment createPendingAppointment(AppointmentCreateDto appointmentCreateDto);
+
+    boolean checkCollision(Long employeeId, java.time.LocalDate date, String startTime, String endTime);
+
+    boolean checkCollisionWithApproved(Long employeeId, java.time.LocalDate date, String startTime, String endTime);
 
     // METODO DE CREACION PARA LA GRILLA
-    AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDateTime date);
+    AppointmentGridDto getAppointmentGrid(Long serviceId, java.time.LocalDate date);
 }

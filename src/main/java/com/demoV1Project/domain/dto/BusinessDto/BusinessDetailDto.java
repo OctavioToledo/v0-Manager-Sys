@@ -3,6 +3,8 @@ package com.demoV1Project.domain.dto.BusinessDto;
 import com.demoV1Project.domain.dto.AddressDto.AddressDto;
 import com.demoV1Project.domain.dto.BusinessHours.BusinessHoursDto;
 import com.demoV1Project.domain.dto.CategoryDto.CategoryDto;
+import com.demoV1Project.domain.dto.EmployeeDto.EmployeeDto;
+import com.demoV1Project.domain.dto.ServiceDto.ServiceDto;
 import com.demoV1Project.domain.dto.UserDto.UserShortDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,5 +29,7 @@ public class BusinessDetailDto {
     private UserShortDto owner;
     private CategoryDto category;
     private AddressDto address;
+    private List<EmployeeDto> employees;
+    private List<ServiceDto> services;
 
 }

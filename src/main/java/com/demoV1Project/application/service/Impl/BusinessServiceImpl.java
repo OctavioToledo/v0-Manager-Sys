@@ -3,7 +3,6 @@ package com.demoV1Project.application.service.Impl;
 import com.demoV1Project.application.mapper.BusinessMapper;
 import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
 import com.demoV1Project.domain.model.Business;
-import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.domain.repository.BusinessRepository;
 import com.demoV1Project.application.service.BusinessService;
 import lombok.RequiredArgsConstructor;

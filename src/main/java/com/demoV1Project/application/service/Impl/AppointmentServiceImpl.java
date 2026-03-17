@@ -3,25 +3,23 @@ package com.demoV1Project.application.service.Impl;
 import com.demoV1Project.application.exceptions.InvalidAppointmentGridException;
 import com.demoV1Project.application.service.*;
 import com.demoV1Project.domain.dto.AppointmentDto.AppointmentCreateDto;
-
 import com.demoV1Project.domain.dto.AppointmentGridDto.AppointmentGridDto;
 import com.demoV1Project.domain.dto.AppointmentGridDto.EmployeeScheduleGridDto;
 import com.demoV1Project.domain.dto.AppointmentGridDto.TimeSlotDto;
 import com.demoV1Project.domain.model.*;
-
 import com.demoV1Project.domain.repository.*;
-
 import com.demoV1Project.util.enums.AppointmentStatus;
-import com.demoV1Project.util.enums.Auxiliar.TimeSlotUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@org.springframework.stereotype.Service
+@Service
 @RequiredArgsConstructor
 public class AppointmentServiceImpl implements AppointmentService {
 
@@ -33,6 +31,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         private final BusinessService businessService;
         private final BusinessHoursRepository businessHoursRepository;
         private final EmployeeWorkScheduleRepository employeeWorkScheduleRepository;
+        private final AppointmentSlotGenerator appointmentSlotGenerator;
+
+        private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
         @Override
         public List<Appointment> findAll() {
@@ -61,94 +62,60 @@ public class AppointmentServiceImpl implements AppointmentService {
         }
 
         @Override
-        public Appointment createAndSaveAppointment(AppointmentCreateDto appointmentCreateDto) {
-                Employee employee = employeeService.findById(appointmentCreateDto.getEmployeeId())
+        public boolean checkCollision(Long employeeId, LocalDate date, String startTime, String endTime) {
+                return !appointmentRepository.findOverlappingAppointments(employeeId, date, startTime, endTime)
+                                .isEmpty();
+        }
+
+        @Override
+        public boolean checkCollisionWithApproved(Long employeeId, LocalDate date, String startTime, String endTime) {
+                return appointmentRepository.countOverlappingApprovedAppointments(employeeId, date, startTime,
+                                endTime) > 0;
+        }
+
+        @Override
+        public Appointment createPendingAppointment(AppointmentCreateDto dto) {
+                Employee employee = employeeService.findById(dto.getEmployeeId())
                                 .orElseThrow(() -> new IllegalArgumentException("Employee not found"));
 
-                Business business = businessService.findById(appointmentCreateDto.getBusinessId())
+                Business business = businessService.findById(dto.getBusinessId())
                                 .orElseThrow(() -> new IllegalArgumentException("Business not found"));
 
                 com.demoV1Project.domain.model.Service service = serviceService
-                                .findById(appointmentCreateDto.getServiceId())
+                                .findById(dto.getServiceId())
                                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
 
-                User user = userService.findById(appointmentCreateDto.getUserId())
+                User user = userService.findById(dto.getUserId())
                                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-                // === VALIDACIÓN 1: Employee pertenece al Business ===
                 if (!employee.getBusiness().getId().equals(business.getId())) {
-                        throw new IllegalArgumentException(
-                                        "El empleado no pertenece al negocio seleccionado");
+                        throw new IllegalArgumentException("El empleado no pertenece al negocio");
                 }
-
-                // === VALIDACIÓN 2: Service pertenece al Business ===
                 if (!service.getBusiness().getId().equals(business.getId())) {
-                        throw new IllegalArgumentException(
-                                        "El servicio no pertenece al negocio seleccionado");
+                        throw new IllegalArgumentException("El servicio no pertenece al negocio");
                 }
 
-                // === VALIDACIÓN 3: Sin solapamiento de citas ===
-                LocalDateTime appointmentStart = appointmentCreateDto.getDate();
-                LocalDateTime appointmentEnd = appointmentStart.plusMinutes(service.getDuration());
-
-                List<Appointment> overlapping = appointmentRepository.findOverlappingAppointments(
-                                employee.getId(), appointmentStart, appointmentEnd);
-
-                if (!overlapping.isEmpty()) {
-                        throw new IllegalArgumentException(
-                                        "El empleado ya tiene una cita en ese horario");
-                }
-
-                // === VALIDACIÓN 4: Dentro del horario del negocio ===
-                int dayOfWeek = appointmentStart.getDayOfWeek().getValue() == 7 ? 0
-                                : appointmentStart.getDayOfWeek().getValue();
-                Optional<BusinessHours> businessHoursOpt = businessHoursRepository
-                                .findByBusinessIdAndDayOfWeek(business.getId(), dayOfWeek);
-
-                if (businessHoursOpt.isEmpty() || !businessHoursOpt.get().getIsWorkingDay()) {
-                        throw new IllegalArgumentException(
-                                        "El negocio no opera el día seleccionado");
-                }
-
-                BusinessHours bh = businessHoursOpt.get();
-                java.time.LocalTime startTime = appointmentStart.toLocalTime();
-                java.time.LocalTime endTime = appointmentEnd.toLocalTime();
-
-                boolean inMorning = bh.getMorningStart() != null
-                                && bh.getMorningEnd() != null
-                                && !startTime.isBefore(bh.getMorningStart())
-                                && !endTime.isAfter(bh.getMorningEnd());
-
-                boolean inEvening = bh.getAfternoonStart() != null
-                                && bh.getAfternoonEnd() != null
-                                && !startTime.isBefore(bh.getAfternoonStart())
-                                && !endTime.isAfter(bh.getAfternoonEnd());
-
-                if (!inMorning && !inEvening) {
-                        throw new IllegalArgumentException(
-                                        "La cita está fuera del horario de atención del negocio");
-                }
+                LocalTime start = LocalTime.parse(dto.getStartTime(), TIME_FORMATTER);
+                String calculatedEndTime = start.plusMinutes(service.getDuration()).format(TIME_FORMATTER);
 
                 Appointment appointment = Appointment.builder()
-                                .date(appointmentCreateDto.getDate())
-                                .status(AppointmentStatus.valueOf(appointmentCreateDto.getStatus()))
+                                .appointmentDate(dto.getAppointmentDate())
+                                .startTime(dto.getStartTime())
+                                .endTime(calculatedEndTime)
+                                .status(AppointmentStatus.PENDING)
                                 .business(business)
                                 .employee(employee)
                                 .service(service)
                                 .user(user)
                                 .build();
 
-                appointmentRepository.save(appointment);
-
-                return appointment;
+                return appointmentRepository.save(appointment);
         }
 
-        // METODO DE CREACION PARA LA GRILLA
         @Override
-        public AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDateTime date) {
-                Service service = serviceService.findById(serviceId)
-                                .orElseThrow(() -> new InvalidAppointmentGridException(
-                                                "Service not found with id: " + serviceId));
+        public AppointmentGridDto getAppointmentGrid(Long serviceId, LocalDate date) {
+                com.demoV1Project.domain.model.Service service = serviceService.findById(serviceId)
+                                .orElseThrow(() -> new InvalidAppointmentGridException("Service not found"));
                 int duration = service.getDuration();
 
                 List<Employee> employees = employeeRepository.findByServicesId(serviceId);
@@ -163,36 +130,59 @@ public class AppointmentServiceImpl implements AppointmentService {
                         throw new InvalidAppointmentGridException("El negocio no opera el día seleccionado");
                 }
 
-                List<TimeSlotDto> timeSlots = TimeSlotUtils.generateTimeSlots(businessHours, duration);
+                List<TimeSlotDto> masterTimeSlots = new ArrayList<>();
+                LocalTime morningStart = businessHours.getMorningStart();
+                LocalTime morningEnd = businessHours.getMorningEnd();
+                if (morningStart != null && morningEnd != null) {
+                        LocalTime current = morningStart;
+                        while (!current.plusMinutes(duration).isAfter(morningEnd)) {
+                                masterTimeSlots.add(TimeSlotDto.builder().startTime(current)
+                                                .endTime(current.plusMinutes(duration)).available(true).build());
+                                current = current.plusMinutes(duration);
+                        }
+                }
+                LocalTime afternoonStart = businessHours.getAfternoonStart();
+                LocalTime afternoonEnd = businessHours.getAfternoonEnd();
+                if (afternoonStart != null && afternoonEnd != null) {
+                        LocalTime current = afternoonStart;
+                        while (!current.plusMinutes(duration).isAfter(afternoonEnd)) {
+                                masterTimeSlots.add(TimeSlotDto.builder().startTime(current)
+                                                .endTime(current.plusMinutes(duration)).available(true).build());
+                                current = current.plusMinutes(duration);
+                        }
+                }
 
                 List<EmployeeScheduleGridDto> employeeScheduleGridDtos = new ArrayList<>();
 
                 for (Employee employee : employees) {
                         EmployeeWorkSchedule schedule = employeeWorkScheduleRepository
                                         .findByEmployeeIdAndDayOfWeek(employee.getId(), dayOfWeek);
-
                         List<Appointment> takenAppointments = appointmentRepository
-                                        .findByEmployeeIdAndDate(employee.getId(), date);
+                                        .findByEmployeeIdAndAppointmentDate(employee.getId(), date);
 
-                        List<Boolean> availability = TimeSlotUtils.calculateAvailability(
-                                        timeSlots, schedule, takenAppointments, duration);
+                        List<String> validSlots = appointmentSlotGenerator.generateAvailableSlots(date, duration,
+                                        businessHours, schedule, takenAppointments);
 
-                        List<TimeSlotDto> timeSlotDtos = new ArrayList<>();
-                        for (int i = 0; i < timeSlots.size(); i++) {
-                                timeSlotDtos.add(new TimeSlotDto(timeSlots.get(i), availability.get(i)));
+                        List<TimeSlotDto> employeeSpecificSlots = new ArrayList<>();
+                        for (TimeSlotDto genericSlot : masterTimeSlots) {
+                                boolean isAvailableForEmployee = validSlots
+                                                .contains(genericSlot.getStartTime().format(TIME_FORMATTER));
+                                employeeSpecificSlots.add(TimeSlotDto.builder()
+                                                .startTime(genericSlot.getStartTime())
+                                                .endTime(genericSlot.getEndTime())
+                                                .available(isAvailableForEmployee)
+                                                .build());
                         }
 
-                        employeeScheduleGridDtos.add(
-                                        new EmployeeScheduleGridDto(employee.getId(), employee.getName(),
-                                                        timeSlotDtos));
+                        employeeScheduleGridDtos.add(new EmployeeScheduleGridDto(employee.getId(), employee.getName(),
+                                        employeeSpecificSlots));
                 }
 
                 return AppointmentGridDto.builder()
                                 .serviceName(service.getName())
                                 .serviceDuration(duration)
-                                .timeSlots(timeSlots)
+                                .timeSlots(masterTimeSlots)
                                 .employeeAvailabilities(employeeScheduleGridDtos)
                                 .build();
         }
-
 }

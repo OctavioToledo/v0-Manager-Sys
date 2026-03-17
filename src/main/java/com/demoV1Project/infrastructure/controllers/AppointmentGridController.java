@@ -22,8 +22,7 @@ public class AppointmentGridController {
     @GetMapping("/grid")
     public ResponseEntity<AppointmentGridDto> getAppointmentGrid(
             @RequestParam Long serviceId,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime date
-    ) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         AppointmentGridDto grid = appointmentGridService.getAppointmentGrid(serviceId, date);
         return ResponseEntity.ok(grid);
     }

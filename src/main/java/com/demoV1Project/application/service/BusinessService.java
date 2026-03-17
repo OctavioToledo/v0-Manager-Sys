@@ -2,7 +2,6 @@ package com.demoV1Project.application.service;
 
 import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
 import com.demoV1Project.domain.model.Business;
-import com.demoV1Project.domain.model.Category;
 
 import java.util.List;
 import java.util.Optional;

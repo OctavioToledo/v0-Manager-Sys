@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -21,9 +21,24 @@ public class Appointment extends Auditable {
     private Long id;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private AppointmentStatus status;
 
-    private LocalDateTime date;
+    @Column(nullable = false, name = "appointment_date")
+    private LocalDate appointmentDate;
+
+    @Column(nullable = false, name = "start_time", length = 5)
+    private String startTime;
+
+    @Column(nullable = false, name = "end_time", length = 5)
+    private String endTime;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.status == null) {
+            this.status = AppointmentStatus.PENDING;
+        }
+    }
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)

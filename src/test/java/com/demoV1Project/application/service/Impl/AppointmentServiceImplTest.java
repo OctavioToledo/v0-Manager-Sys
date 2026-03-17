@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -46,6 +47,8 @@ class AppointmentServiceImplTest {
     private BusinessHoursRepository businessHoursRepository;
     @Mock
     private EmployeeWorkScheduleRepository employeeWorkScheduleRepository;
+    @Mock
+    private AppointmentSlotGenerator appointmentSlotGenerator;
 
     @InjectMocks
     private AppointmentServiceImpl appointmentService;
@@ -58,7 +61,8 @@ class AppointmentServiceImplTest {
                 .businessId(1L)
                 .serviceId(1L)
                 .userId(1L)
-                .date(LocalDateTime.now())
+                .appointmentDate(LocalDate.now())
+                .startTime("09:00")
                 .status("PENDING")
                 .build();
 
@@ -70,6 +74,7 @@ class AppointmentServiceImplTest {
         com.demoV1Project.domain.model.Service service = new com.demoV1Project.domain.model.Service();
         service.setId(1L);
         service.setBusiness(business);
+        service.setDuration(30); // Prevent NPE on start.plusMinutes(service.getDuration())
         User user = new User();
         user.setId(1L);
 
@@ -77,9 +82,10 @@ class AppointmentServiceImplTest {
         when(businessService.findById(1L)).thenReturn(Optional.of(business));
         when(serviceService.findById(1L)).thenReturn(Optional.of(service));
         when(userService.findById(1L)).thenReturn(Optional.of(user));
+        when(appointmentRepository.save(any(Appointment.class))).thenAnswer(i -> i.getArguments()[0]);
 
         // Act
-        Appointment result = appointmentService.createAndSaveAppointment(dto);
+        Appointment result = appointmentService.createPendingAppointment(dto);
 
         // Assert
         assertNotNull(result);
@@ -95,7 +101,7 @@ class AppointmentServiceImplTest {
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
-            appointmentService.createAndSaveAppointment(dto);
+            appointmentService.createPendingAppointment(dto);
         });
         assertEquals("Employee not found", exception.getMessage());
     }
@@ -104,7 +110,7 @@ class AppointmentServiceImplTest {
     void getAppointmentGrid_Success() {
         // Arrange
         Long serviceId = 1L;
-        LocalDateTime date = LocalDateTime.of(2023, 10, 25, 10, 0); // Wednesday
+        LocalDate date = LocalDate.of(2023, 10, 25); // Wednesday
 
         Business business = new Business();
         business.setId(10L);
@@ -137,8 +143,11 @@ class AppointmentServiceImplTest {
         when(employeeWorkScheduleRepository.findByEmployeeIdAndDayOfWeek(eq(100L), anyInt()))
                 .thenReturn(schedule);
 
-        when(appointmentRepository.findByEmployeeIdAndDate(eq(100L), any(LocalDateTime.class)))
+        when(appointmentRepository.findByEmployeeIdAndAppointmentDate(eq(100L), any(LocalDate.class)))
                 .thenReturn(new ArrayList<>());
+
+        when(appointmentSlotGenerator.generateAvailableSlots(any(), anyInt(), any(), any(), any()))
+                .thenReturn(List.of("10:00", "11:00"));
 
         // Act
         AppointmentGridDto grid = appointmentService.getAppointmentGrid(serviceId, date);

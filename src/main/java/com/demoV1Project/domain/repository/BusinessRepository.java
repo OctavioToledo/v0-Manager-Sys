@@ -23,9 +23,10 @@ public interface BusinessRepository extends JpaRepository<Business, Long> {
         @Query("SELECT b FROM Business b " +
                         "LEFT JOIN FETCH b.address a " +
                         "LEFT JOIN FETCH b.category c " +
-                        "WHERE (:name = '' OR LOWER(b.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
-                        "AND (:categoryName = '' OR LOWER(c.name) = LOWER(:categoryName)) " +
-                        "AND (:city = '' OR LOWER(a.city) LIKE LOWER(CONCAT('%', :city, '%')))")
+                        "WHERE (:name IS NULL OR :name = '' OR LOWER(b.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+                        "AND (:categoryName IS NULL OR :categoryName = '' OR LOWER(c.name) LIKE LOWER(CONCAT('%', :categoryName, '%'))) "
+                        +
+                        "AND (:city IS NULL OR :city = '' OR LOWER(a.city) LIKE LOWER(CONCAT('%', :city, '%')))")
         List<Business> searchBusinesses(@Param("name") String name,
                         @Param("categoryName") String categoryName,
                         @Param("city") String city);

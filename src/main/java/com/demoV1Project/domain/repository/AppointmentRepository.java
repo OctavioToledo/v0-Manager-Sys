@@ -7,26 +7,34 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
-        List<Appointment> findByEmployeeIdAndDate(Long id, LocalDateTime date);
+        List<Appointment> findByEmployeeIdAndAppointmentDate(Long employeeId, LocalDate appointmentDate);
 
-        /**
-         * Busca citas que se solapan con el rango [start, end) para un empleado dado.
-         * Excluye citas canceladas.
-         */
         @Query(value = "SELECT a.* FROM appointments a " +
-                        "JOIN services s ON a.service_id = s.id " +
                         "WHERE a.employee_id = :employeeId " +
                         "AND a.status <> 'CANCELLED' " +
-                        "AND a.date < :endTime " +
-                        "AND (a.date + (s.duration * interval '1 minute')) > :startTime", nativeQuery = true)
+                        "AND a.status <> 'REJECTED' " +
+                        "AND a.appointment_date = :date " +
+                        "AND CAST(a.start_time AS time) < CAST(:endTime AS time) " +
+                        "AND CAST(a.end_time AS time) > CAST(:startTime AS time)", nativeQuery = true)
         List<Appointment> findOverlappingAppointments(
                         @Param("employeeId") Long employeeId,
-                        @Param("startTime") LocalDateTime startTime,
-                        @Param("endTime") LocalDateTime endTime);
+                        @Param("date") LocalDate date,
+                        @Param("startTime") String startTime,
+                        @Param("endTime") String endTime);
+
+        @Query(value = "SELECT COUNT(a.id) FROM appointments a " +
+                        "WHERE a.employee_id = :employeeId " +
+                        "AND a.status = 'APPROVED' " +
+                        "AND a.appointment_date = :date " +
+                        "AND CAST(a.start_time AS time) < CAST(:endTime AS time) " +
+                        "AND CAST(a.end_time AS time) > CAST(:startTime AS time)", nativeQuery = true)
+        int countOverlappingApprovedAppointments(
+                        @Param("employeeId") Long employeeId,
+                        @Param("date") LocalDate date,
+                        @Param("startTime") String startTime,
+                        @Param("endTime") String endTime);
 }

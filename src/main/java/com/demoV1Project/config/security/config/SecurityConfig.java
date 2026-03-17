@@ -80,7 +80,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(origins);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS", "HEAD"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "Cache-Control", "Pragma"));
         configuration.setExposedHeaders(Arrays.asList("X-Get-Header"));
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -130,6 +130,9 @@ public class SecurityConfig {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.debug(webSecurityDebug);
+        return (web) -> {
+            web.debug(webSecurityDebug);
+            // No more ignoring() for API endpoints to ensure CORS works correctly
+        };
     }
 }
