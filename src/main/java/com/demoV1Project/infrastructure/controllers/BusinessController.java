@@ -106,7 +106,20 @@ public class BusinessController {
         Business business = businessService.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Business not found"));
         tenantContext.validateBusinessOwnership(business.getId());
+        
         businessMapper.updateEntity(businessUpdateDto, business);
+
+        // Ensure Address has a reference back to Business for bidirectional persistence
+        if (business.getAddress() != null) {
+            business.getAddress().setBusiness(business);
+        }
+
+        // Load real category to avoid errors or null relationships
+        if (businessUpdateDto.getCategory() != null && businessUpdateDto.getCategory().getId() != null) {
+            Category category = categoryService.findById(businessUpdateDto.getCategory().getId()).orElse(null);
+            business.setCategory(category);
+        }
+
         businessService.save(business);
         return ResponseEntity.ok("Business updated successfully");
     }
