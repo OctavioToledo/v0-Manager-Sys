@@ -1,7 +1,6 @@
 package com.demoV1Project.domain.dto.UserDto;
 
 import com.demoV1Project.domain.dto.BusinessDto.BusinessShortDto;
-import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.util.enums.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -3,7 +3,6 @@ package com.demoV1Project.domain.dto.BusinessDto;
 import com.demoV1Project.domain.model.Address;
 import com.demoV1Project.domain.dto.BusinessHours.BusinessHoursDto;
 import com.demoV1Project.domain.model.Category;
-import com.demoV1Project.domain.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
