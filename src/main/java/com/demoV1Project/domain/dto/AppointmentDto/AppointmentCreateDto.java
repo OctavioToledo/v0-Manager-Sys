@@ -21,4 +21,7 @@ public class AppointmentCreateDto {
     private Long employeeId;
     private Long serviceId;
     private Long userId;
+    private String clientName;
+    private String clientEmail;
+    private String clientPhone;
 }

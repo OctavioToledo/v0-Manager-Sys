@@ -19,5 +19,8 @@ public class AppointmentUpdateDto {
     private String endTime;
     private Long employeeId;
     private Long serviceId;
+    private String clientName;
+    private String clientEmail;
+    private String clientPhone;
 
 }

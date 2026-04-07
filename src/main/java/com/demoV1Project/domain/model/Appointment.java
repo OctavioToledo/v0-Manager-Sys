@@ -57,7 +57,16 @@ public class Appointment extends Auditable {
     private Business business;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnore
     private User user;
+
+    @Column(name = "client_name")
+    private String clientName;
+
+    @Column(name = "client_email")
+    private String clientEmail;
+
+    @Column(name = "client_phone")
+    private String clientPhone;
 }

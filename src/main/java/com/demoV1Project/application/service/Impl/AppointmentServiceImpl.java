@@ -85,31 +85,37 @@ public class AppointmentServiceImpl implements AppointmentService {
                                 .findById(dto.getServiceId())
                                 .orElseThrow(() -> new IllegalArgumentException("Service not found"));
 
-                User user = userService.findById(dto.getUserId())
-                                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = null;
+        if (dto.getUserId() != null) {
+            user = userService.findById(dto.getUserId())
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        }
 
-                if (!employee.getBusiness().getId().equals(business.getId())) {
-                        throw new IllegalArgumentException("El empleado no pertenece al negocio");
-                }
-                if (!service.getBusiness().getId().equals(business.getId())) {
-                        throw new IllegalArgumentException("El servicio no pertenece al negocio");
-                }
+        if (!employee.getBusiness().getId().equals(business.getId())) {
+            throw new IllegalArgumentException("El empleado no pertenece al negocio");
+        }
+        if (!service.getBusiness().getId().equals(business.getId())) {
+            throw new IllegalArgumentException("El servicio no pertenece al negocio");
+        }
 
-                LocalTime start = LocalTime.parse(dto.getStartTime(), TIME_FORMATTER);
-                String calculatedEndTime = start.plusMinutes(service.getDuration()).format(TIME_FORMATTER);
+        LocalTime start = LocalTime.parse(dto.getStartTime(), TIME_FORMATTER);
+        String calculatedEndTime = start.plusMinutes(service.getDuration()).format(TIME_FORMATTER);
 
-                Appointment appointment = Appointment.builder()
-                                .appointmentDate(dto.getAppointmentDate())
-                                .startTime(dto.getStartTime())
-                                .endTime(calculatedEndTime)
-                                .status(AppointmentStatus.PENDING)
-                                .business(business)
-                                .employee(employee)
-                                .service(service)
-                                .user(user)
-                                .build();
+        Appointment appointment = Appointment.builder()
+                .appointmentDate(dto.getAppointmentDate())
+                .startTime(dto.getStartTime())
+                .endTime(calculatedEndTime)
+                .status(AppointmentStatus.PENDING)
+                .business(business)
+                .employee(employee)
+                .service(service)
+                .user(user)
+                .clientName(dto.getClientName())
+                .clientEmail(dto.getClientEmail())
+                .clientPhone(dto.getClientPhone())
+                .build();
 
-                return appointmentRepository.save(appointment);
+        return appointmentRepository.save(appointment);
         }
 
         @Override
