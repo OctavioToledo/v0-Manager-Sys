@@ -47,6 +47,10 @@ public class BusinessHoursServiceImpl implements BusinessHoursService {
     }
 
     private void validateBusinessHours(BusinessHoursDto dto) {
+        if (dto.getIsWorkingDay() != null && !dto.getIsWorkingDay()) {
+            return; // If not a working day, times can be null
+        }
+
         if (dto.getMorningStart() == null || dto.getMorningEnd() == null) {
             throw new IllegalArgumentException("Los horarios matutinos son obligatorios");
         }

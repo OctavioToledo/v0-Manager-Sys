@@ -32,6 +32,12 @@ public class BusinessHoursController {
         return ResponseEntity.ok(businessHoursService.findByBusinessId(businessId));
     }
 
+    @GetMapping("/public")
+    public ResponseEntity<List<BusinessHoursDto>> getHoursPublic(@PathVariable Long businessId) {
+        // No validateBusinessOwnership check for public profile
+        return ResponseEntity.ok(businessHoursService.findByBusinessId(businessId));
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> deleteHours(@PathVariable Long businessId) {
         tenantContext.validateBusinessOwnership(businessId);

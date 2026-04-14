@@ -3,6 +3,7 @@ package com.demoV1Project.application.service;
 import com.demoV1Project.domain.model.Appointment;
 import com.demoV1Project.domain.model.BusinessHours;
 import com.demoV1Project.domain.model.EmployeeWorkSchedule;
+import com.demoV1Project.domain.model.BusinessHoliday;
 import com.demoV1Project.util.enums.AppointmentStatus;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +21,11 @@ public class AppointmentSlotGenerator {
     public List<String> generateAvailableSlots(
             LocalDate date,
             int serviceDurationMinutes,
+            int slotIntervalMinutes,
             BusinessHours business,
             EmployeeWorkSchedule employee,
-            List<Appointment> existingAppointments) {
+            List<Appointment> existingAppointments,
+            List<BusinessHoliday> holidays) {
         List<String> availableSlots = new ArrayList<>();
 
         if (business == null || !Boolean.TRUE.equals(business.getIsWorkingDay()) ||
@@ -35,7 +38,7 @@ public class AppointmentSlotGenerator {
 
         if (morningStart != null && morningEnd != null && morningStart.isBefore(morningEnd)) {
             availableSlots.addAll(
-                    calculateSlotsForShift(morningStart, morningEnd, serviceDurationMinutes, existingAppointments));
+                    calculateSlotsForShift(morningStart, morningEnd, serviceDurationMinutes, slotIntervalMinutes, existingAppointments, holidays));
         }
 
         LocalTime afternoonStart = getLatest(business.getAfternoonStart(), employee.getAfternoonStart());
@@ -43,7 +46,7 @@ public class AppointmentSlotGenerator {
 
         if (afternoonStart != null && afternoonEnd != null && afternoonStart.isBefore(afternoonEnd)) {
             availableSlots.addAll(
-                    calculateSlotsForShift(afternoonStart, afternoonEnd, serviceDurationMinutes, existingAppointments));
+                    calculateSlotsForShift(afternoonStart, afternoonEnd, serviceDurationMinutes, slotIntervalMinutes, existingAppointments, holidays));
         }
 
         return availableSlots;
@@ -53,7 +56,9 @@ public class AppointmentSlotGenerator {
             LocalTime shiftStart,
             LocalTime shiftEnd,
             int durationMinutes,
-            List<Appointment> existingAppointments) {
+            int intervalMinutes,
+            List<Appointment> existingAppointments,
+            List<BusinessHoliday> holidays) {
         List<String> shiftSlots = new ArrayList<>();
         LocalTime currentSlotStart = shiftStart;
 
@@ -62,17 +67,30 @@ public class AppointmentSlotGenerator {
 
             boolean hasOverlap = false;
 
-            for (Appointment appt : existingAppointments) {
-                if (appt.getStatus() == AppointmentStatus.REJECTED || appt.getStatus() == AppointmentStatus.CANCELLED) {
-                    continue;
+            // Check against holiday exceptions
+            for (BusinessHoliday holiday : holidays) {
+                if (!Boolean.TRUE.equals(holiday.getIsFullDay()) && holiday.getStartTime() != null && holiday.getEndTime() != null) {
+                    if (currentSlotStart.isBefore(holiday.getEndTime()) && currentSlotEnd.isAfter(holiday.getStartTime())) {
+                        hasOverlap = true;
+                        break;
+                    }
                 }
+            }
 
-                LocalTime apptStart = LocalTime.parse(appt.getStartTime(), TIME_FORMATTER);
-                LocalTime apptEnd = LocalTime.parse(appt.getEndTime(), TIME_FORMATTER);
+            if (!hasOverlap) {
+                // Check against existing appointments
+                for (Appointment appt : existingAppointments) {
+                    if (appt.getStatus() == AppointmentStatus.REJECTED || appt.getStatus() == AppointmentStatus.CANCELLED) {
+                        continue;
+                    }
 
-                if (currentSlotStart.isBefore(apptEnd) && currentSlotEnd.isAfter(apptStart)) {
-                    hasOverlap = true;
-                    break;
+                    LocalTime apptStart = LocalTime.parse(appt.getStartTime(), TIME_FORMATTER);
+                    LocalTime apptEnd = LocalTime.parse(appt.getEndTime(), TIME_FORMATTER);
+
+                    if (currentSlotStart.isBefore(apptEnd) && currentSlotEnd.isAfter(apptStart)) {
+                        hasOverlap = true;
+                        break;
+                    }
                 }
             }
 
@@ -80,25 +98,22 @@ public class AppointmentSlotGenerator {
                 shiftSlots.add(currentSlotStart.format(TIME_FORMATTER));
             }
 
-            currentSlotStart = currentSlotStart.plusMinutes(durationMinutes);
+            // Increment based on slot interval, not service duration!
+            currentSlotStart = currentSlotStart.plusMinutes(intervalMinutes);
         }
 
         return shiftSlots;
     }
 
     private LocalTime getLatest(LocalTime t1, LocalTime t2) {
-        if (t1 == null)
-            return t2;
-        if (t2 == null)
-            return t1;
+        if (t1 == null) return t2;
+        if (t2 == null) return t1;
         return t1.isAfter(t2) ? t1 : t2;
     }
 
     private LocalTime getEarliest(LocalTime t1, LocalTime t2) {
-        if (t1 == null)
-            return t2;
-        if (t2 == null)
-            return t1;
+        if (t1 == null) return t2;
+        if (t2 == null) return t1;
         return t1.isBefore(t2) ? t1 : t2;
     }
 }

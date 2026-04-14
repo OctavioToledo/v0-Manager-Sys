@@ -13,6 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.format.annotation.DateTimeFormat;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
@@ -35,6 +39,47 @@ public class AppointmentController {
                 .map(appointmentMapper::toDto);
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/findByDate")
+    public ResponseEntity<List<AppointmentDto>> findByBusinessAndDate(
+            @RequestParam Long businessId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        tenantContext.validateBusinessOwnership(businessId);
+        List<AppointmentDto> result = appointmentService.findByBusinessIdAndDate(businessId, date)
+                .stream()
+                .map(appointmentMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/findByDateRange")
+    public ResponseEntity<List<AppointmentDto>> findByBusinessAndDateRange(
+            @RequestParam Long businessId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        tenantContext.validateBusinessOwnership(businessId);
+        List<AppointmentDto> result = appointmentService.findByBusinessIdAndDateRange(businessId, startDate, endDate)
+                .stream()
+                .map(appointmentMapper::toDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/public/occupied")
+    public ResponseEntity<List<String>> getOccupiedSlots(
+            @RequestParam Long employeeId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        // En un perfil público, queremos saber qué slots están tomados para filtrarlos
+        // Solo devolvemos las horas de inicio (anónimo)
+        List<String> occupiedTimes = appointmentService.findByEmployeeIdAndDate(employeeId, date)
+                .stream()
+                .filter(a -> a.getStatus() != AppointmentStatus.REJECTED && a.getStatus() != AppointmentStatus.CANCELLED)
+                .map(a -> a.getStartTime().substring(0, 5)) // HH:mm
+                .distinct()
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(occupiedTimes);
+    }
+    
 
     @GetMapping("/find/{id}")
     public ResponseEntity<AppointmentDto> findById(@PathVariable Long id) {

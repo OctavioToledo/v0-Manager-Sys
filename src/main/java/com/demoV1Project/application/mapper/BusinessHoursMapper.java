@@ -28,8 +28,15 @@ public class BusinessHoursMapper {
         if (entity == null) {
             return null;
         }
+        
+        String[] days = {"", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"};
+        String dayName = (entity.getDayOfWeek() != null && entity.getDayOfWeek() >= 1 && entity.getDayOfWeek() <= 7) 
+            ? days[entity.getDayOfWeek()] : "";
+
         return BusinessHoursDto.builder()
+                .id(entity.getId())
                 .dayOfWeek(entity.getDayOfWeek())
+                .dayOfWeekName(dayName)
                 .isWorkingDay(entity.getIsWorkingDay())
                 .morningStart(entity.getMorningStart())
                 .morningEnd(entity.getMorningEnd())

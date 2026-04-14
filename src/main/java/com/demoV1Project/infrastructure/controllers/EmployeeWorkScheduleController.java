@@ -36,6 +36,13 @@ public class EmployeeWorkScheduleController {
         return ResponseEntity.ok(service.findByEmployeeId(employeeId));
     }
 
+    @GetMapping("/public")
+    public ResponseEntity<List<EmployeeWorkScheduleDto>> findByEmployeeIdPublic(
+            @PathVariable Long employeeId) {
+        // Public endpoint, no validateEmployeeOwnership check
+        return ResponseEntity.ok(service.findByEmployeeId(employeeId));
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> deleteByEmployeeId(
             @PathVariable Long employeeId) {

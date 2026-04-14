@@ -29,4 +29,10 @@ public interface AppointmentService {
 
     // METODO DE CREACION PARA LA GRILLA
     AppointmentGridDto getAppointmentGrid(Long serviceId, java.time.LocalDate date);
+
+    List<Appointment> findByBusinessIdAndDate(Long businessId, java.time.LocalDate date);
+
+    List<Appointment> findByBusinessIdAndDateRange(Long businessId, java.time.LocalDate startDate, java.time.LocalDate endDate);
+
+    List<Appointment> findByEmployeeIdAndDate(Long employeeId, java.time.LocalDate date);
 }

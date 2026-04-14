@@ -48,6 +48,9 @@ public class TenantContext {
      * Valida que el usuario autenticado sea dueño del negocio indicado.
      */
     public void validateBusinessOwnership(Long businessId) {
+        if (businessId == null) {
+            throw new IllegalArgumentException("El ID del negocio no puede ser nulo");
+        }
         User user = getCurrentUser();
         boolean isOwner = user.getBusinessList().stream()
                 .anyMatch(b -> b.getId().equals(businessId));

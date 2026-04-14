@@ -33,6 +33,18 @@ public class Appointment extends Auditable {
     @Column(nullable = false, name = "end_time", length = 5)
     private String endTime;
 
+    @Column(name = "client_name")
+    private String clientName;
+
+    @Column(name = "client_phone", length = 50)
+    private String clientPhone;
+
+    @Column(name = "client_email")
+    private String clientEmail;
+
+    @Column(columnDefinition = "TEXT")
+    private String notes;
+
     @PrePersist
     public void prePersist() {
         if (this.status == null) {
@@ -57,7 +69,7 @@ public class Appointment extends Auditable {
     private Business business;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     @JsonIgnore
     private User user;
 }

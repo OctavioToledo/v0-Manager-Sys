@@ -13,6 +13,10 @@ import java.util.List;
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
         List<Appointment> findByEmployeeIdAndAppointmentDate(Long employeeId, LocalDate appointmentDate);
 
+        List<Appointment> findByBusinessIdAndAppointmentDate(Long businessId, LocalDate appointmentDate);
+
+        List<Appointment> findByBusinessIdAndAppointmentDateBetween(Long businessId, LocalDate startDate, LocalDate endDate);
+
         @Query(value = "SELECT a.* FROM appointments a " +
                         "WHERE a.employee_id = :employeeId " +
                         "AND a.status <> 'CANCELLED' " +

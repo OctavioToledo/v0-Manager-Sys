@@ -38,6 +38,13 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeDtos);
     }
 
+    @GetMapping("/public/findAll")
+    public ResponseEntity<List<EmployeeDetailDto>> findAllPublic(@RequestParam Long businessId) {
+        // Public endpoint, no validateBusinessOwnership check
+        List<EmployeeDetailDto> employeeDtos = employeeService.findByBusinessId(businessId);
+        return ResponseEntity.ok(employeeDtos);
+    }
+
     @GetMapping("/find/{id}")
     public ResponseEntity<EmployeeDto> findById(@PathVariable Long id) {
         return employeeService.findById(id)

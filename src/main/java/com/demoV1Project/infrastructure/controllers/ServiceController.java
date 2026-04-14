@@ -30,8 +30,21 @@ public class ServiceController {
     private final EmployeeService employeeService;
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<ServiceDto>> findByBusinessId(@RequestParam Long businessId) {
+    public ResponseEntity<?> findByBusinessId(@RequestParam(required = false) Long businessId) {
+        if (businessId == null) {
+            return ResponseEntity.badRequest().body("Business ID is required");
+        }
         tenantContext.validateBusinessOwnership(businessId);
+        List<ServiceDto> services = serviceService.findByBusinessId(businessId);
+        return ResponseEntity.ok(services);
+    }
+
+    @GetMapping("/public/findAll")
+    public ResponseEntity<?> findAllPublic(@RequestParam(required = false) Long businessId) {
+        if (businessId == null) {
+            return ResponseEntity.badRequest().body("Business ID is required");
+        }
+        // Public endpoint, no validateBusinessOwnership check
         List<ServiceDto> services = serviceService.findByBusinessId(businessId);
         return ResponseEntity.ok(services);
     }

@@ -21,6 +21,9 @@ public class Business extends Auditable {
         private String name;
         private String description;
 
+        @Column(name = "slot_duration")
+        private Integer slotDuration = 30;
+
         @Column(name = "phone_number")
         private String phoneNumber;
 
