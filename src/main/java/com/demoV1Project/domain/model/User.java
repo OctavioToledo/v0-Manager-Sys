@@ -24,13 +24,12 @@ public class User extends Auditable {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    private String password;
     private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(name = "auth0_sub", unique = true)
-    private String auth0Sub;
+    @Column(name = "supabase_uid", unique = true)
+    private String supabaseUid;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
