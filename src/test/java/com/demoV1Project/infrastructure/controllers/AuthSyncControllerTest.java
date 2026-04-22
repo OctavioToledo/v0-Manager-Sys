@@ -1,18 +1,14 @@
 package com.demoV1Project.infrastructure.controllers;
 
-import com.demoV1Project.domain.model.User;
-import com.demoV1Project.domain.repository.UserRepository;
-import com.demoV1Project.util.enums.Role;
+import com.demoV1Project.application.service.AuthSyncService;
+import com.demoV1Project.domain.dto.AuthDto.SyncResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Optional;
-import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -23,49 +19,55 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
 class AuthSyncControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockBean
-    private UserRepository userRepository;
+    private AuthSyncService authSyncService;
 
     @Test
-    void sync_returns_user_profile_when_exists() throws Exception {
-        String uid = UUID.randomUUID().toString();
-        User user = new User();
-        user.setId(1L);
-        user.setSupabaseUid(uid);
-        user.setEmail("test@example.com");
-        user.setName("Test User");
-        user.setRole(Role.CLIENT);
+    void sync_returns_user_profile_when_business_exists() throws Exception {
+        String uid = "test-uid-123";
+        SyncResponse response = SyncResponse.builder()
+            .id(1L)
+            .supabaseUid(uid)
+            .email("test@example.com")
+            .name("Test User")
+            .role("ADMIN")
+            .businessId(5L)
+            .build();
 
-        when(userRepository.findBySupabaseUid(uid)).thenReturn(Optional.of(user));
+        when(authSyncService.syncUser(any(Jwt.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/auth/sync")
                 .with(jwt().jwt(j -> j.subject(uid).claim("email", "test@example.com"))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.supabaseUid").value(uid))
-            .andExpect(jsonPath("$.email").value("test@example.com"));
+            .andExpect(jsonPath("$.email").value("test@example.com"))
+            .andExpect(jsonPath("$.businessId").value(5L));
     }
 
     @Test
-    void sync_creates_user_when_not_found() throws Exception {
-        String uid = UUID.randomUUID().toString();
+    void sync_returns_null_business_id_when_no_business() throws Exception {
+        String uid = "new-uid-456";
+        SyncResponse response = SyncResponse.builder()
+            .id(99L)
+            .supabaseUid(uid)
+            .email("new@example.com")
+            .name("new@example.com")
+            .role("CLIENT")
+            .businessId(null)
+            .build();
 
-        when(userRepository.findBySupabaseUid(uid)).thenReturn(Optional.empty());
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> {
-            User u = inv.getArgument(0);
-            u.setId(99L);
-            return u;
-        });
+        when(authSyncService.syncUser(any(Jwt.class))).thenReturn(response);
 
         mockMvc.perform(post("/api/v1/auth/sync")
                 .with(jwt().jwt(j -> j.subject(uid).claim("email", "new@example.com"))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.supabaseUid").value(uid))
-            .andExpect(jsonPath("$.email").value("new@example.com"));
+            .andExpect(jsonPath("$.email").value("new@example.com"))
+            .andExpect(jsonPath("$.businessId").doesNotExist());
     }
 }

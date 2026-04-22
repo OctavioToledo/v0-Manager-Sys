@@ -15,4 +15,5 @@ public class SyncResponse {
     private String email;
     private String name;
     private String role;
+    private Long businessId;   // null si el usuario no tiene negocio registrado
 }

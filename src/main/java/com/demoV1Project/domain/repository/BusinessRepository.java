@@ -8,9 +8,13 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BusinessRepository extends JpaRepository<Business, Long> {
+
+        Optional<Business> findByUserId(Long userId);
+
 
         // @Query("SELECT b FROM Business b LEFT JOIN FETCH b.address LEFT JOIN FETCH
         // b.category")
