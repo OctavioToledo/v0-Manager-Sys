@@ -2,7 +2,6 @@ package com.demoV1Project.application.service.Impl;
 
 import com.demoV1Project.application.mapper.SubscriptionMapper;
 import com.demoV1Project.application.service.SubscriptionService;
-import com.demoV1Project.config.security.JwtTokenProvider;
 import com.demoV1Project.domain.dto.SubscriptionDto.SubscriptionDto;
 import com.demoV1Project.domain.dto.SubscriptionDto.SubscriptionResponseDto;
 import com.demoV1Project.domain.model.Subscription;
@@ -27,7 +26,6 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     private final UserRepository userRepository;
     private final TenantContext tenantContext;
     private final SubscriptionMapper subscriptionMapper;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     @Transactional
@@ -57,17 +55,8 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         currentUser.setRole(Role.ADMIN);
         userRepository.save(currentUser);
 
-        Long businessId = (currentUser.getBusinessList() != null && !currentUser.getBusinessList().isEmpty())
-                ? currentUser.getBusinessList().get(0).getId()
-                : null;
-
-        // Generate refreshed JWT token with new "ADMIN" role
-        String newToken = jwtTokenProvider.generateToken(
-                currentUser.getId(), currentUser.getEmail(), currentUser.getRole().name(), businessId);
-
         return SubscriptionResponseDto.builder()
                 .subscription(subscriptionMapper.toDto(saved))
-                .refreshedToken(newToken)
                 .build();
     }
 

@@ -8,7 +8,6 @@ import com.demoV1Project.domain.model.Business;
 import com.demoV1Project.domain.model.Category;
 import com.demoV1Project.shared.security.TenantContext;
 import lombok.RequiredArgsConstructor;
-import com.demoV1Project.config.security.JwtTokenProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,7 +25,6 @@ public class BusinessController {
     private final BusinessMapper businessMapper;
     private final CategoryService categoryService;
     private final TenantContext tenantContext;
-    private final JwtTokenProvider jwtTokenProvider;
 
     @GetMapping("/findAll")
     public ResponseEntity<org.springframework.data.domain.Page<BusinessDto>> findAll(
@@ -89,16 +87,9 @@ public class BusinessController {
 
         Business savedBusiness = businessService.save(business);
 
-        String newToken = jwtTokenProvider.generateToken(
-                tenantContext.getCurrentUser().getId(),
-                tenantContext.getCurrentUser().getEmail(),
-                tenantContext.getCurrentUser().getRole().name(),
-                savedBusiness.getId());
-
         return ResponseEntity.created(new URI("/api/v1/business/save/"))
                 .body(Map.of(
-                        "business", savedBusiness.getId(),
-                        "token", newToken));
+                        "business", savedBusiness.getId()));
     }
 
     @PutMapping("/update/{id}")
