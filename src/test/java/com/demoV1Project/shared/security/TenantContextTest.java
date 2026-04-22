@@ -1,6 +1,7 @@
 package com.demoV1Project.shared.security;
 
 import com.demoV1Project.domain.model.User;
+import com.demoV1Project.domain.repository.BusinessRepository;
 import com.demoV1Project.domain.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,14 @@ import static org.mockito.Mockito.*;
 class TenantContextTest {
 
     private UserRepository userRepository;
+    private BusinessRepository businessRepository;
     private TenantContext tenantContext;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        tenantContext = new TenantContext(userRepository);
+        businessRepository = mock(BusinessRepository.class);
+        tenantContext = new TenantContext(userRepository, businessRepository);
     }
 
     @Test

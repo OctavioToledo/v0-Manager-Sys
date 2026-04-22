@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -16,8 +17,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,8 +25,8 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    @Value("${supabase.jwt.secret}")
-    private String supabaseJwtSecret;
+    @Value("${supabase.jwks-uri}")
+    private String supabaseJwksUri;
 
     @Value("${cors.allowed-origins}")
     private String corsAllowedOrigins;
@@ -57,9 +56,9 @@ public class SecurityConfig {
 
     @Bean
     public JwtDecoder supabaseJwtDecoder() {
-        byte[] keyBytes = supabaseJwtSecret.getBytes(StandardCharsets.UTF_8);
-        SecretKeySpec secretKey = new SecretKeySpec(keyBytes, "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+        return NimbusJwtDecoder.withJwkSetUri(supabaseJwksUri)
+                .jwsAlgorithm(SignatureAlgorithm.ES256)
+                .build();
     }
 
     @Bean
